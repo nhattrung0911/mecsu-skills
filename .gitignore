@@ -3,10 +3,18 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# Job artifacts: output cua tung lan chay, khong phai nguon.
-samples/job-*/
-jobs/
+# ── VÙNG LÀM VIỆC: file thật của bạn, không bao giờ push ──────────────────────
+# Giữ đúng README để người clone về biết bỏ file vào đâu.
+jobs/*
+!jobs/README.md
 
-# Bo kien thuc rieng de BUILD skill + backup nhanh cu.
-# GitHub chi chua skill cho nguoi dung goi /..., khong chua tai lieu noi bo nay.
+# ── XƯỞNG DỰNG SKILL: bản nháp, chưa phải thành phẩm ──────────────────────────
+lab/*
+!lab/README.md
+
+# ── KIẾN THỨC NỘI BỘ: cách build skill + backup nhánh cũ ──────────────────────
+# GitHub chỉ chứa skill cho người dùng gọi /..., không chứa tài liệu nội bộ này.
 .kb/
+
+# Artifact của từng lần chạy thử trên file mẫu.
+samples/job-*/

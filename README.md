@@ -73,6 +73,36 @@ flowchart LR
 
 > ⚠️ Thoát khác 0 = **không giao**. Không phải "chạy lại kèm cờ khác cho qua".
 
+## Thư mục nào để làm gì
+
+```mermaid
+flowchart TB
+    subgraph PUSH["📦 LÊN GITHUB — thành phẩm"]
+        SK["<b>skills/</b> hai lệnh /...<br/><b>site/</b> web giới thiệu<br/><b>tools/</b> lint · eval · sync_site<br/><b>tests/</b> · <b>docs/</b> · <b>samples/</b>"]
+    end
+    subgraph LOCAL["🔒 CHỈ Ở MÁY BẠN — .gitignore chặn"]
+        JB["<b>jobs/inbox/</b><br/>bỏ file Excel của bạn vào đây"]
+        LB["<b>lab/</b><br/>dựng skill mới, còn nháp"]
+        KB["<b>.kb/</b><br/>cách build skill"]
+    end
+    JB -.->|"/mecsu-category jobs/inbox/file.xlsx"| SK
+    LB ==>|"4 cổng xanh → git mv"| SK
+    KB -.->|"bám flow"| LB
+
+    style PUSH fill:#e6f4ea,stroke:#34a853
+    style LOCAL fill:#fef7e0,stroke:#f9ab00
+```
+
+| Thư mục | Vai trò | Push? |
+|---|---|---|
+| `skills/` | Skill **thành phẩm** — mỗi thư mục là một lệnh `/...` | ✅ |
+| `site/` `tools/` `tests/` `docs/` | Web, công cụ, test, tài liệu của repo | ✅ |
+| `samples/` | File Excel **mẫu** đi kèm repo để chạy thử | ✅ |
+| `jobs/inbox/` | **File thật của bạn** — chỗ bỏ file vào để xài skill | ❌ |
+| `jobs/oncheck/` `jobs/delivered/` | Skill tự sinh: hàng đợi, changelog, file đã duyệt | ❌ |
+| `lab/` | **Xưởng dựng skill mới**, chưa qua bốn cổng | ❌ |
+| `.kb/` | Kiến thức nội bộ về cách build skill | ❌ |
+
 ## Đọc thêm
 
 | | |
