@@ -1,6 +1,6 @@
 # mecsu-skills
 
-Skill Claude Code nội bộ Mecsu cho dữ liệu sản phẩm.
+Skill Claude Code nội bộ Mecsu cho dữ liệu sản phẩm. · **[Xem web giới thiệu →](https://mecsu-skills.pages.dev)**
 
 ```mermaid
 flowchart LR
@@ -107,6 +107,7 @@ flowchart TB
 
 | | |
 |---|---|
+| 🤖 Quy ước cho agent làm việc trong repo | [CLAUDE.md](CLAUDE.md) |
 | 📘 Hướng dẫn chi tiết, bảng lỗi | [docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md) |
 | ⚙️ Luật của `/mecsu-category` | [SKILL.md](skills/mecsu-category/SKILL.md) · [reference.md](skills/mecsu-category/reference.md) |
 | ⚙️ Luật của `/mecsu-filter` | [SKILL.md](skills/mecsu-filter/SKILL.md) · [workflow.md](skills/mecsu-filter/workflow.md) |
