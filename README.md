@@ -1,16 +1,46 @@
 # mecsu-skills
 
-Skill Claude Code nội bộ Mecsu cho dữ liệu sản phẩm. Cài một lần, gọi bằng `/...` ở mọi phiên.
+Skill Claude Code nội bộ Mecsu cho dữ liệu sản phẩm.
 
-| Skill | Trả lời | Đầu vào |
-|---|---|---|
-| `/mecsu-category` | Sản phẩm có nằm **đúng danh mục lá** không? | Excel có cột mô tả + danh mục đã gán |
-| `/mecsu-filter` | Sản phẩm đã **đủ và đúng thông số** chưa? | Excel có cột filter dạng `Key: Value` |
+```mermaid
+flowchart LR
+    F["📄 File Excel<br/>sản phẩm"] --> Q{Hỏi gì?}
+    Q -->|"Danh mục gán<br/>đúng chưa?"| C["/mecsu-category"]
+    Q -->|"Thông số<br/>đủ &amp; đúng chưa?"| T["/mecsu-filter"]
+    C --> R1["📋 changelog.xlsx<br/><i>người duyệt</i>"]
+    T --> R2["📋 cham_diem.xlsx<br/><i>người chấm</i>"]
+
+    style F fill:#e8f0fe,stroke:#4285f4
+    style C fill:#fef7e0,stroke:#f9ab00
+    style T fill:#fef7e0,stroke:#f9ab00
+    style R1 fill:#e6f4ea,stroke:#34a853
+    style R2 fill:#e6f4ea,stroke:#34a853
+```
+
+## Dây chuyền — LLM là tầng cuối
+
+```mermaid
+flowchart LR
+    A["1️⃣ Dò cột<br/>+ lọc chữ"] --> B["2️⃣ Tra chính<br/>file đang xử lý"]
+    B --> C["3️⃣ Hỏi model"]
+    C --> D["4️⃣ Đối chiếu<br/>ngược"]
+    D --> E["5️⃣ Dựng file<br/>+ tự kiểm tra"]
+    E --> F["👤 Người duyệt"]
+
+    style A fill:#e6f4ea,stroke:#34a853
+    style B fill:#e6f4ea,stroke:#34a853
+    style C fill:#fce8e6,stroke:#ea4335
+    style D fill:#e6f4ea,stroke:#34a853
+    style E fill:#e6f4ea,stroke:#34a853
+    style F fill:#e8f0fe,stroke:#4285f4
+```
+
+🟢 **0 token** · 🔴 tốn tiền · rule lọc sạch **63.7%** dòng, phần còn lại gộp trùng **9×** trước khi gọi model
 
 ## Cài
 
 ```bash
-pip install openpyxl requests python-dotenv      # cần Python 3.11+
+pip install openpyxl requests python-dotenv        # Python 3.11+
 ```
 
 ```
@@ -18,45 +48,36 @@ pip install openpyxl requests python-dotenv      # cần Python 3.11+
 /plugin install mecsu-skills@mecsu-skills
 ```
 
-Điền key **một lần** ở gốc plugin — mọi skill đọc chung:
-
 ```bash
-cp .env.example .env      # rồi điền MECSU_BASE_URL + MECSU_API_KEY
+cp .env.example .env      # điền MECSU_BASE_URL + MECSU_API_KEY, một lần cho mọi skill
 ```
-
-`.env` nằm trong `.gitignore`. **Không commit.**
 
 ## Chạy
 
 ```
-/mecsu-category d:/duong/dan/file.xlsx
-/mecsu-filter   d:/duong/dan/file.xlsx
+/mecsu-category  d:/file.xlsx
+/mecsu-filter    d:/file.xlsx
 ```
 
-Mỗi lệnh chạy cả dây chuyền và **dừng lại sau lô hiệu chuẩn 50 câu** — đọc lô đó rồi mới chạy lại
-kèm `--yes`. Chưa có key vẫn chạy được các tầng đầu vì chúng không gọi model, **0 token**.
+```mermaid
+flowchart LR
+    R["Chạy"] --> S["⏸ Dừng sau<br/>50 câu hiệu chuẩn"]
+    S --> K{"Lô mẫu<br/>hợp lý?"}
+    K -->|Có| Y["Chạy lại kèm --yes"]
+    K -->|Không| N["Sửa cột / model<br/>rồi chạy lại"]
 
-Kết quả cần người duyệt: `changelog.xlsx` (category) và `review/cham_diem.xlsx` (filter). Thoát
-khác 0 nghĩa là **không giao**, không phải "chạy lại kèm cờ khác".
+    style S fill:#fef7e0,stroke:#f9ab00
+    style Y fill:#e6f4ea,stroke:#34a853
+    style N fill:#fce8e6,stroke:#ea4335
+```
 
-## Tài liệu
+> ⚠️ Thoát khác 0 = **không giao**. Không phải "chạy lại kèm cờ khác cho qua".
 
-| Cần gì | Đọc |
+## Đọc thêm
+
+| | |
 |---|---|
-| Hướng dẫn dùng chi tiết, từng bước, bảng lỗi thường gặp | [docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md) |
-| Luật và cách vận hành `/mecsu-category` | [skills/mecsu-category/SKILL.md](skills/mecsu-category/SKILL.md) · [reference.md](skills/mecsu-category/reference.md) |
-| Luật và cách vận hành `/mecsu-filter` | [skills/mecsu-filter/SKILL.md](skills/mecsu-filter/SKILL.md) · [workflow.md](skills/mecsu-filter/workflow.md) · [policy.md](skills/mecsu-filter/policy.md) |
-
-## Phát triển
-
-```bash
-claude plugin validate .                # 0 token
-python -m pytest skills/*/tests -q      # 0 token
-python tools/lint_skills.py             # 0 token
-python tools/eval_skills.py             # token Gemini, không phải token Claude
-```
-
-Thêm skill mới: tạo `skills/<tên>/SKILL.md`, Claude Code tự quét. Trong SKILL.md trỏ script bằng
-`${CLAUDE_SKILL_DIR}/scripts/...`, **không hardcode đường dẫn**. `name` trong frontmatter là tên
-lệnh — đổi là phá lệnh của người đang dùng. Chi tiết ở
-[docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md#8-cho-người-phát-triển-skill).
+| 📘 Hướng dẫn chi tiết, bảng lỗi | [docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md) |
+| ⚙️ Luật của `/mecsu-category` | [SKILL.md](skills/mecsu-category/SKILL.md) · [reference.md](skills/mecsu-category/reference.md) |
+| ⚙️ Luật của `/mecsu-filter` | [SKILL.md](skills/mecsu-filter/SKILL.md) · [workflow.md](skills/mecsu-filter/workflow.md) |
+| 🧪 Kiểm tra trước khi push | `claude plugin validate .` · `pytest skills/*/tests -q` · `python tools/lint_skills.py` |
