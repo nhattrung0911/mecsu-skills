@@ -1,0 +1,20 @@
+{
+  "skills": [
+    {
+      "skill_id": "mecsu-category",
+      "public_title": "Soát danh mục sản phẩm",
+      "purpose": "Kiểm tra danh mục lá đã gán có khớp mô tả sản phẩm không, đề xuất thay thế lấy từ chính taxonomy đang dùng.",
+      "onboarding_prompt": "Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file Excel của tôi.",
+      "website_section": "mecsu-category",
+      "contract_version": "2.0"
+    },
+    {
+      "skill_id": "mecsu-filter",
+      "public_title": "Soát thông số kỹ thuật",
+      "purpose": "Bắt lỗi format tên, mâu thuẫn tên với filter và filter thiếu; điền giá trị cụ thể kèm căn cứ cho từng ô trống.",
+      "onboarding_prompt": "Dùng skill mecsu-filter để soát và bổ sung thông số kỹ thuật trong file Excel của tôi.",
+      "website_section": "mecsu-filter",
+      "contract_version": "2.0"
+    }
+  ]
+}

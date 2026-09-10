@@ -80,4 +80,4 @@ flowchart LR
 | 📘 Hướng dẫn chi tiết, bảng lỗi | [docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md) |
 | ⚙️ Luật của `/mecsu-category` | [SKILL.md](skills/mecsu-category/SKILL.md) · [reference.md](skills/mecsu-category/reference.md) |
 | ⚙️ Luật của `/mecsu-filter` | [SKILL.md](skills/mecsu-filter/SKILL.md) · [workflow.md](skills/mecsu-filter/workflow.md) |
-| 🧪 Kiểm tra trước khi push | `claude plugin validate .` · `pytest skills/*/tests -q` · `python tools/lint_skills.py` |
+| 🧪 Kiểm tra trước khi push | `claude plugin validate .` · `pytest -q` · `python tools/lint_skills.py` |

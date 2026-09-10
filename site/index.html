@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Mecsu Skills: hai skill kiểm tra dữ liệu sản phẩm cho AI agent - soát danh mục và soát thông số kỹ thuật, có chốt chặn trước khi báo xong." />
+    <title>Mecsu Skills — Soát dữ liệu sản phẩm cùng AI</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#noi-dung">Bỏ qua điều hướng</a>
+    <header class="site-header">
+      <a class="brand" href="#gioi-thieu" aria-label="Mecsu Skills trang chủ"><span class="brand-mark" aria-hidden="true">M</span><span>Mecsu Skills</span></a>
+      <nav aria-label="Điều hướng chính"><a href="#chon-skill">Chọn skill</a><a href="#day-chuyen">Dây chuyền</a><a href="#bat-dau">Bắt đầu</a><a href="#kiem-soat">Kiểm soát</a><a href="#faq">Hỏi đáp</a></nav>
+    </header>
+
+    <main id="noi-dung">
+      <section id="gioi-thieu" class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">Mecsu Skills · dành cho AI agent</p>
+          <h1>Soát dữ liệu sản phẩm, không đoán bừa.</h1>
+          <p class="hero-lede">Hai skill chạy trên file Excel của bạn: một soát <strong>danh mục</strong>, một soát <strong>thông số kỹ thuật</strong>. Phần chưa đủ bằng chứng được giữ lại cho người duyệt thay vì báo xong cho có.</p>
+          <a class="button button-primary" href="#bat-dau">Bắt đầu trong 3 bước</a>
+        </div>
+        <aside class="hero-card" aria-label="Số đo thật">
+          <p class="card-kicker">ĐO ĐƯỢC TRÊN FILE THẬT</p>
+          <ul>
+            <li><strong>63.7%</strong> số dòng xử xong bằng luật, <strong>0 token</strong></li>
+            <li><strong>9×</strong> giảm số lần gọi model nhờ gộp trùng</li>
+            <li><strong>50 câu</strong> hiệu chuẩn trước khi tiêu tiền cho cả bộ</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="proof-strip" aria-label="Cam kết"><p>Luật rẻ chạy trước</p><p>Tự kiểm tra file mình dựng ra</p><p>Chưa chắc thì để người quyết</p></section>
+
+      <section id="chon-skill" class="section-shell">
+        <div class="section-heading"><p class="eyebrow">Chọn skill</p><h2>Câu hỏi của bạn quyết định dùng skill nào.</h2></div>
+        <div class="skill-grid">
+          <article class="skill-card">
+            <p class="skill-tag">/mecsu-category</p>
+            <h3>Danh mục gán đúng chưa?</h3>
+            <p>Đối chiếu mô tả sản phẩm với danh mục lá đang mang. Danh mục hiện có là <em>bằng chứng để đi kiểm</em>, không gán lại từ đầu.</p>
+            <p class="skill-out">Ra: <strong>changelog.xlsx</strong> — người duyệt trước khi giao</p>
+          </article>
+          <article class="skill-card">
+            <p class="skill-tag">/mecsu-filter</p>
+            <h3>Thông số đủ và đúng chưa?</h3>
+            <p>Bắt lỗi format tên, mâu thuẫn tên ↔ filter, filter thiếu; rồi điền giá trị cụ thể kèm căn cứ, không chỉ báo "thiếu".</p>
+            <p class="skill-out">Ra: <strong>cham_diem.xlsx</strong> — mỗi ô một dòng, xếp theo độ khó chấm</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="day-chuyen" class="section-shell section-muted">
+        <div class="section-heading"><p class="eyebrow">Dây chuyền</p><h2>Model là tầng cuối, không phải tầng đầu.</h2><p>Mọi ô đều phải qua luật và tra chính file trước. Hỏi model thứ file đã biết là trả tiền cho câu trả lời có sẵn.</p></div>
+        <ol class="pipeline">
+          <li class="pipe-free"><span class="pipe-step">1</span><h3>Dò cột &amp; lọc chữ</h3><p>0 token</p></li>
+          <li class="pipe-free"><span class="pipe-step">2</span><h3>Tra chính file</h3><p>0 token</p></li>
+          <li class="pipe-paid"><span class="pipe-step">3</span><h3>Hỏi model</h3><p>tốn tiền</p></li>
+          <li class="pipe-free"><span class="pipe-step">4</span><h3>Đối chiếu ngược</h3><p>0 token</p></li>
+          <li class="pipe-free"><span class="pipe-step">5</span><h3>Dựng file + tự kiểm</h3><p>0 token</p></li>
+          <li class="pipe-human"><span class="pipe-step">👤</span><h3>Người duyệt</h3><p>chốt cuối</p></li>
+        </ol>
+      </section>
+
+      <section id="bat-dau" class="section-shell section-accent">
+        <div class="section-heading compact-heading"><p class="eyebrow">Bắt đầu</p><h2>Copy đoạn dưới, dán vào AI của bạn.</h2></div>
+        <div class="prompt-card">
+          <template id="prompt-bootstrap">Cài plugin skill từ repo https://github.com/nhattrung0911/mecsu-skills cho môi trường hiện tại. Với Claude Code: /plugin marketplace add nhattrung0911/mecsu-skills rồi /plugin install mecsu-skills@mecsu-skills. Môi trường khác thì lấy nguyên thư mục skills/mecsu-category và skills/mecsu-filter, giữ nguyên SKILL.md, scripts và references, không ghi đè skill khác. Cài xong hãy xác nhận skill đã được nhận diện và cho biết cần cài thêm gì (Python 3.11+, openpyxl, requests, python-dotenv) và có phải mở phiên mới không.</template>
+          <p class="prompt-text">Cài plugin skill từ repo <span class="mono">nhattrung0911/mecsu-skills</span>, xác nhận skill đã nhận diện, và cho biết cần cài thêm gì.</p>
+          <button class="button button-secondary" type="button" data-copy-prompt="bootstrap">Sao chép yêu cầu cài</button>
+        </div>
+      </section>
+
+      <section id="mecsu-category" class="section-shell" data-skill-id="mecsu-category">
+        <div class="section-heading compact-heading"><p class="eyebrow">Skill 1</p><h2>/mecsu-category — soát danh mục đã gán.</h2></div>
+        <div class="prompt-card prompt-card-light">
+          <template id="prompt-mecsu-category">Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file &lt;đường dẫn file.xlsx&gt;. Chạy lô hiệu chuẩn trước và dừng lại cho tôi đọc, đừng tự đặt --yes. Sau khi chạy đủ, hãy nói rõ: bao nhiêu cặp bị chấm sai, bao nhiêu cặp hai model bất đồng, và bao nhiêu sản phẩm không có danh mục hợp lệ nào. Chỉ báo hoàn tất khi changelog đã dựng xong và tự kiểm tra đã pass.</template>
+          <p class="prompt-text">Kiểm tra danh mục đã gán trong file của tôi, dừng ở lô hiệu chuẩn cho tôi đọc trước.</p>
+          <button class="button button-outline" type="button" data-copy-prompt="mecsu-category">Sao chép yêu cầu chạy</button>
+        </div>
+      </section>
+
+      <section id="mecsu-filter" class="section-shell section-muted" data-skill-id="mecsu-filter">
+        <div class="section-heading compact-heading"><p class="eyebrow">Skill 2</p><h2>/mecsu-filter — soát và bổ sung thông số.</h2></div>
+        <div class="prompt-card prompt-card-light">
+          <template id="prompt-mecsu-filter">Dùng skill mecsu-filter cho file &lt;đường dẫn file.xlsx&gt;. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo "thiếu filter" suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.</template>
+          <p class="prompt-text">Soát thông số trong file của tôi, mỗi đề xuất phải kèm giá trị cụ thể và căn cứ.</p>
+          <button class="button button-outline" type="button" data-copy-prompt="mecsu-filter">Sao chép yêu cầu chạy</button>
+        </div>
+      </section>
+
+      <section id="kiem-soat" class="section-shell">
+        <div class="section-heading"><p class="eyebrow">Điểm kiểm soát</p><h2>Thoát khác 0 nghĩa là không giao.</h2><p>Skill tự mở lại file nó vừa dựng và so với file gốc: số dòng, dòng không đụng tới, id danh mục. Lệch một chỗ là dừng, không phải "chạy lại kèm cờ khác cho qua". Ô chưa đủ bằng chứng nằm lại ở khu review, không đẩy sang thư mục đã giao.</p></div>
+      </section>
+
+      <section id="faq" class="section-shell section-muted">
+        <div class="section-heading"><p class="eyebrow">Hỏi đáp</p><h2>Cần biết trước khi dùng.</h2></div>
+        <div class="faq-list">
+          <details><summary>Chưa có API key thì chạy được không?</summary><p>Được, phần đầu vẫn chạy vì nó không gọi model. Script sẽ tự dừng và in đường dẫn file .env cần điền khi tới bước cần key.</p></details>
+          <details><summary>Vì sao nó dừng giữa chừng rồi bắt đọc?</summary><p>Đó là lô hiệu chuẩn 50 câu. Đọc lô này là cách rẻ nhất để phát hiện sai sót trước khi trả tiền cho cả file.</p></details>
+          <details><summary>Ô đánh dấu REVIEW là ô sai à?</summary><p>Không. REVIEW nghĩa là dữ liệu trong file không đồng ý với giá trị đề xuất. Đối chiếu bảng tra tiêu chuẩn hoặc tra web rồi mới quyết — chính file nguồn cũng có thể sai.</p></details>
+          <details><summary>Agent có được tự báo hoàn tất không?</summary><p>Không. Còn cặp tranh chấp chưa ai quyết thì bước giao file bị chặn, và sự từ chối đó là tính năng.</p></details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Mecsu Skills · Bộ skill nội bộ cho AI agent.</p><p id="copy-status" role="status" aria-live="polite"></p></footer>
+  </body>
+</html>
