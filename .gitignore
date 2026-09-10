@@ -21,3 +21,10 @@ lab/*
 
 # Artifact của từng lần chạy thử trên file mẫu.
 samples/job-*/
+
+# ── TÀI LIỆU NỘI BỘ: cách build skill, không lên GitHub ───────────────────────
+# GitHub chỉ chứa skill + cách sử dụng. Bản làm việc vẫn nằm ở máy.
+CLAUDE.md
+docs/specs/
+docs/superpowers/
+skills/*/TODO.md

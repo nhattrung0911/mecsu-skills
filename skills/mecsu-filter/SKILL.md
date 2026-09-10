@@ -97,4 +97,3 @@ tối ưu — đừng đổi sang model đắt hơn nếu chưa đo lại.
 
 - Từng bước, lý do thiết kế, và mọi số đo: [workflow.md](workflow.md)
 - Ngân sách token và ngưỡng phải xin phép: [policy.md](policy.md)
-- Việc còn nợ: [TODO.md](TODO.md)
