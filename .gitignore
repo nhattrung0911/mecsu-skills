@@ -6,3 +6,7 @@ __pycache__/
 # Job artifacts: output cua tung lan chay, khong phai nguon.
 test/job-*/
 jobs/
+
+# Bo kien thuc rieng de BUILD skill + backup nhanh cu.
+# GitHub chi chua skill cho nguoi dung goi /..., khong chua tai lieu noi bo nay.
+.kb/
