@@ -1,0 +1,31 @@
+{
+  "name": "mecsu-skills",
+  "owner": {
+    "name": "Mecsu"
+  },
+  "metadata": {
+    "description": "Mecsu internal Claude Code skills",
+    "version": "0.3.0"
+  },
+  "plugins": [
+    {
+      "name": "mecsu-skills",
+      "source": "./",
+      "description": "Product data skills for Mecsu: leaf category auditing, and product filter/spec auditing and completion.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Mecsu"
+      },
+      "keywords": [
+        "category",
+        "taxonomy",
+        "product-data",
+        "excel",
+        "filter",
+        "specs",
+        "fasteners"
+      ],
+      "category": "data"
+    }
+  ]
+}

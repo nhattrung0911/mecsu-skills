@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Job artifacts: output cua tung lan chay, khong phai nguon.
+test/job-*/
+jobs/
