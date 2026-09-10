@@ -75,23 +75,24 @@
         </div>
       </section>
 
+      <!-- skills:start -->
       <section id="mecsu-category" class="section-shell" data-skill-id="mecsu-category">
-        <div class="section-heading compact-heading"><p class="eyebrow">Skill 1</p><h2>/mecsu-category — soát danh mục đã gán.</h2></div>
+        <div class="section-heading compact-heading"><p class="eyebrow">Skill 1</p><h2>/mecsu-category — soát danh mục đã gán.</h2><p>Đối chiếu mô tả sản phẩm với danh mục lá đang mang. Danh mục hiện có là bằng chứng để đi kiểm, không gán lại từ đầu. Kết quả ra changelog.xlsx cho người duyệt.</p></div>
         <div class="prompt-card prompt-card-light">
           <template id="prompt-mecsu-category">Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file &lt;đường dẫn file.xlsx&gt;. Chạy lô hiệu chuẩn trước và dừng lại cho tôi đọc, đừng tự đặt --yes. Sau khi chạy đủ, hãy nói rõ: bao nhiêu cặp bị chấm sai, bao nhiêu cặp hai model bất đồng, và bao nhiêu sản phẩm không có danh mục hợp lệ nào. Chỉ báo hoàn tất khi changelog đã dựng xong và tự kiểm tra đã pass.</template>
-          <p class="prompt-text">Kiểm tra danh mục đã gán trong file của tôi, dừng ở lô hiệu chuẩn cho tôi đọc trước.</p>
+          <p class="prompt-text">Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file &lt;đường dẫn file.xlsx&gt;. Chạy lô hiệu chuẩn trước và dừng lại cho tôi đọc, đừng tự đặt --yes. Sau khi chạy đủ, hãy nói rõ: bao nhiêu cặp bị chấm sai, bao nhiêu cặp hai model bất đồng, và bao nhiêu sản phẩm không có danh mục hợp lệ nào. Chỉ báo hoàn tất khi changelog đã dựng xong và tự kiểm tra đã pass.</p>
           <button class="button button-outline" type="button" data-copy-prompt="mecsu-category">Sao chép yêu cầu chạy</button>
         </div>
       </section>
-
       <section id="mecsu-filter" class="section-shell section-muted" data-skill-id="mecsu-filter">
-        <div class="section-heading compact-heading"><p class="eyebrow">Skill 2</p><h2>/mecsu-filter — soát và bổ sung thông số.</h2></div>
+        <div class="section-heading compact-heading"><p class="eyebrow">Skill 2</p><h2>/mecsu-filter — soát và bổ sung thông số.</h2><p>Bắt lỗi format tên, mâu thuẫn tên với filter và filter thiếu; rồi điền giá trị cụ thể kèm căn cứ, không chỉ báo thiếu. Kết quả ra cham_diem.xlsx, mỗi ô một dòng xếp theo độ khó chấm.</p></div>
         <div class="prompt-card prompt-card-light">
-          <template id="prompt-mecsu-filter">Dùng skill mecsu-filter cho file &lt;đường dẫn file.xlsx&gt;. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo "thiếu filter" suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.</template>
-          <p class="prompt-text">Soát thông số trong file của tôi, mỗi đề xuất phải kèm giá trị cụ thể và căn cứ.</p>
+          <template id="prompt-mecsu-filter">Dùng skill mecsu-filter cho file &lt;đường dẫn file.xlsx&gt;. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo &quot;thiếu filter&quot; suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.</template>
+          <p class="prompt-text">Dùng skill mecsu-filter cho file &lt;đường dẫn file.xlsx&gt;. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo &quot;thiếu filter&quot; suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.</p>
           <button class="button button-outline" type="button" data-copy-prompt="mecsu-filter">Sao chép yêu cầu chạy</button>
         </div>
       </section>
+      <!-- skills:end -->
 
       <section id="kiem-soat" class="section-shell">
         <div class="section-heading"><p class="eyebrow">Điểm kiểm soát</p><h2>Thoát khác 0 nghĩa là không giao.</h2><p>Skill tự mở lại file nó vừa dựng và so với file gốc: số dòng, dòng không đụng tới, id danh mục. Lệch một chỗ là dừng, không phải "chạy lại kèm cờ khác cho qua". Ô chưa đủ bằng chứng nằm lại ở khu review, không đẩy sang thư mục đã giao.</p></div>

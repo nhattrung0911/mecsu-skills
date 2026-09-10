@@ -2,17 +2,17 @@
   "skills": [
     {
       "skill_id": "mecsu-category",
-      "public_title": "Soát danh mục sản phẩm",
-      "purpose": "Kiểm tra danh mục lá đã gán có khớp mô tả sản phẩm không, đề xuất thay thế lấy từ chính taxonomy đang dùng.",
-      "onboarding_prompt": "Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file Excel của tôi.",
+      "public_title": "soát danh mục đã gán",
+      "purpose": "Đối chiếu mô tả sản phẩm với danh mục lá đang mang. Danh mục hiện có là bằng chứng để đi kiểm, không gán lại từ đầu. Kết quả ra changelog.xlsx cho người duyệt.",
+      "onboarding_prompt": "Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file <đường dẫn file.xlsx>. Chạy lô hiệu chuẩn trước và dừng lại cho tôi đọc, đừng tự đặt --yes. Sau khi chạy đủ, hãy nói rõ: bao nhiêu cặp bị chấm sai, bao nhiêu cặp hai model bất đồng, và bao nhiêu sản phẩm không có danh mục hợp lệ nào. Chỉ báo hoàn tất khi changelog đã dựng xong và tự kiểm tra đã pass.",
       "website_section": "mecsu-category",
       "contract_version": "2.0"
     },
     {
       "skill_id": "mecsu-filter",
-      "public_title": "Soát thông số kỹ thuật",
-      "purpose": "Bắt lỗi format tên, mâu thuẫn tên với filter và filter thiếu; điền giá trị cụ thể kèm căn cứ cho từng ô trống.",
-      "onboarding_prompt": "Dùng skill mecsu-filter để soát và bổ sung thông số kỹ thuật trong file Excel của tôi.",
+      "public_title": "soát và bổ sung thông số",
+      "purpose": "Bắt lỗi format tên, mâu thuẫn tên với filter và filter thiếu; rồi điền giá trị cụ thể kèm căn cứ, không chỉ báo thiếu. Kết quả ra cham_diem.xlsx, mỗi ô một dòng xếp theo độ khó chấm.",
+      "onboarding_prompt": "Dùng skill mecsu-filter cho file <đường dẫn file.xlsx>. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo \"thiếu filter\" suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.",
       "website_section": "mecsu-filter",
       "contract_version": "2.0"
     }
