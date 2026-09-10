@@ -3,6 +3,9 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+# Cache cua wrangler khi deploy (chua account id + email).
+.wrangler/
+
 # ── VÙNG LÀM VIỆC: file thật của bạn, không bao giờ push ──────────────────────
 # Giữ đúng README để người clone về biết bỏ file vào đâu.
 jobs/*
