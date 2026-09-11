@@ -47,9 +47,34 @@ def test_sinh_du_file(tmp_path):
     assert '${CLAUDE_SKILL_DIR}' in dau, 'phai tro script bang bien, khong hardcode duong dan'
 
 
-def test_thu_sinh_ra_qua_duoc_lint(tmp_path):
+def test_khung_chua_ai_viet_thi_lint_phai_do(tmp_path):
+    """Khung moi dung xong PHAI truot lint, cho toi khi co nguoi viet noi dung.
+
+    Loi that, do 2026-09-11: scaffold xong, `SKILL.md` con nguyen dong
+    `- TODO: liet ke tinh huong kich hoat...`, `lint_skills.py` ra `0 loi` exit 0
+    - ca khi da `git mv` sang skills/. Nghia la mot skill mang text khuon di qua
+    duoc ca cong 2 lan cong 3, roi `description` placeholder do len website va
+    vao bo chon skill cua Claude.
+    """
     kho = _kho(tmp_path)
     assert _dung(kho).returncode == 0
+
+    ket_qua = _chay(str(LINT), '--root', str(kho), '--dir', 'lab')
+    assert ket_qua.returncode != 0, 'khung con nguyen TODO ma lint van xanh'
+    assert 'TODO' in ket_qua.stdout
+
+
+def test_viet_xong_thi_lint_xanh(tmp_path):
+    """Chot con lai cua ca tren: luat moi khong duoc lam lint do vinh vien."""
+    kho = _kho(tmp_path)
+    assert _dung(kho).returncode == 0
+
+    duong_dan = kho / 'lab' / 'mecsu-thu' / 'SKILL.md'
+    duong_dan.write_text(
+        duong_dan.read_text(encoding='utf-8').replace(
+            '- TODO: liet ke tinh huong kich hoat, ke ca tu khoa tieng Viet nguoi dung that su go.',
+            '- Khi file Excel chi co cot ma hang, chua co ten san pham.'),
+        encoding='utf-8')
 
     ket_qua = _chay(str(LINT), '--root', str(kho), '--dir', 'lab')
     assert ket_qua.returncode == 0, ket_qua.stdout + ket_qua.stderr

@@ -4,9 +4,18 @@
     python tools/new_skill.py ten-skill --purpose "Viec skill nay lam."
 
 Sinh san SKILL.md dung frontmatter, website.json, mot script co argparse va mot
-test khoi dong. Thu sinh ra PHAI qua duoc lint ngay:
+test khoi dong.
+
+Khung sinh ra CO Y TRUOT lint cho toi khi co nguoi viet noi dung:
 
     python tools/lint_skills.py --dir lab
+    -> SKILL.md con dong TODO - text khuon chua duoc viet lai
+
+Do khong phai loi. Giong `run.py` co y thoat 2 cho toi khi co nguoi viet logic:
+khung phai DO o moi cong cho toi khi co nguoi lam viec. Truoc day no xanh, va
+mot skill mang nguyen text khuon di qua duoc ca cong 2 lan cong 3.
+
+Xoa dong TODO va viet muc "Khi nao dung" that vao la lint xanh.
 
 Lam bang tay thi lan nao cung quen mot thu: ten trong frontmatter lech ten thu
 muc, khong co test nen lint bao loi, hoac trung ten file test voi skill khac
@@ -204,6 +213,7 @@ def main() -> None:
         print('   %s' % duong_dan)
     print('\nBuoc tiep:')
     print('   1. Viet logic vao scripts/run.py, sua phan TODO trong SKILL.md')
+    print('      (khung nay CO Y truot lint cho toi khi ban viet xong - khong phai loi)')
     print('   2. python tools/lint_skills.py --dir lab')
     print('   3. python -m pytest -q')
     print('   4. Bon cong xanh het thi: git mv lab/%s skills/%s' % (args.ten, args.ten))

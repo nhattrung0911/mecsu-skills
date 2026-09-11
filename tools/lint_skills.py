@@ -31,6 +31,13 @@ LINK = re.compile(r'\[[^\]]*\]\(([^)#][^)]*)\)')
 # ten `hoa.py` that thi lint PASS NHAM.
 COMMAND = re.compile(r'python\s+(\S*?)([A-Za-z_0-9-]+\.py)((?:\s+[^\n`]*)?)')
 FLAG = re.compile(r'(?<![-\w])--[a-z][a-z0-9-]*')
+# Text khuon chua duoc viet lai. Khung do `new_skill.py` sinh ra CO Y truot cong
+# nay cho toi khi co nguoi viet noi dung - giong `run.py` co y thoat 2 cho toi khi
+# co nguoi viet logic. Truoc khi co luat nay, mot skill mang nguyen dong
+# `- TODO: liet ke tinh huong kich hoat...` di qua ca cong 2 lan cong 3, va
+# `description` placeholder cua no len website lan vao bo chon skill cua Claude.
+PLACEHOLDER = re.compile(r'^\s*[-*]?\s*TODO\b', re.MULTILINE)
+
 STALE = {
     '.agents/skills': 'duong dan cua ban skill cu',
     'jobs/oncheck/$J': 'duong dan job hardcode',
@@ -93,6 +100,8 @@ def check(skill: Path, fail) -> None:
             fail(name, 'SKILL.md %d dong > %d' % (lines, MAX_SKILL_LINES))
         if doc != main and lines > MIN_LINES_FOR_TOC and 'Mục lục' not in body and 'Contents' not in body:
             fail(name, '%s dai %d dong nhung khong co muc luc' % (doc.name, lines))
+        if PLACEHOLDER.search(body):
+            fail(name, '%s con dong TODO - text khuon chua duoc viet lai' % doc.name)
         for marker, why in STALE.items():
             if marker in body:
                 fail(name, '%s con %r (%s)' % (doc.name, marker, why))
