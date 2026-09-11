@@ -64,9 +64,24 @@ nav a { display: inline-flex; align-items: center; min-height: 2.75rem; padding:
 nav a:hover { color: var(--aqua-900); }
 
 .hero { position: relative; grid-template-columns: minmax(0, 1.35fr) minmax(17rem, .82fr); min-height: 36rem; overflow: hidden; color: var(--white); background: var(--aqua-900); }
-.hero::before, .hero::after { position: absolute; content: ""; pointer-events: none; }
+.hero::before { position: absolute; content: ""; pointer-events: none; }
 .hero::before { right: 7%; bottom: -19rem; width: 28rem; height: 28rem; border: 2rem solid rgba(255, 255, 255, .13); border-radius: 50%; }
-.hero::after { top: -6rem; left: 44%; width: 12rem; height: 12rem; background: var(--yellow-500); border-radius: 50%; }
+/* --- kien hang 3D: CSS transform, khong thu vien (CSP chan moi CDN) --- */
+/* Dat o goc phai tren, PHIA TREN the so lieu - de o giua thi de len tieu de. */
+.crate-stage { position: absolute; top: 2.2rem; right: 9%; z-index: 0; perspective: 34rem; pointer-events: none; }
+.crate { position: relative; width: var(--crate); height: var(--crate); transform-style: preserve-3d; animation: crate-spin 22s linear infinite; --crate: 7rem; --half: 3.5rem; }
+.crate-face { position: absolute; inset: 0; border: 2px solid var(--ink); box-sizing: border-box; }
+.crate-front  { background: var(--yellow-500); transform: translateZ(var(--half)); }
+.crate-back   { background: #E0A800; transform: rotateY(180deg) translateZ(var(--half)); }
+.crate-right  { background: #D99E00; transform: rotateY(90deg) translateZ(var(--half)); }
+.crate-left   { background: #D99E00; transform: rotateY(-90deg) translateZ(var(--half)); }
+.crate-top    { background: #FFD54A; transform: rotateX(90deg) translateZ(var(--half)); }
+.crate-bottom { background: #C58F00; transform: rotateX(-90deg) translateZ(var(--half)); }
+/* Dai nep thung: gradient, khong phai anh - img-src 'self' nen tranh phu thuoc file anh. */
+.crate-front, .crate-back { background-image: linear-gradient(90deg, transparent 38%, rgba(6, 43, 58, .22) 38%, rgba(6, 43, 58, .22) 46%, transparent 46%); }
+@keyframes crate-spin { from { transform: rotateX(-18deg) rotateY(0deg); } to { transform: rotateX(-18deg) rotateY(360deg); } }
+@media (prefers-reduced-motion: reduce) { .crate { animation: none; transform: rotateX(-18deg) rotateY(-28deg); } }
+@media (max-width: 60rem) { .crate-stage { display: none; } }
 .hero-copy, .signal-dashboard { position: relative; z-index: 1; }
 .agent-ready { display: inline-grid; gap: .05rem; max-width: 29rem; margin-bottom: 1.6rem; padding: .65rem .85rem; border-left: .32rem solid var(--yellow-500); background: rgba(6, 43, 58, .22); }
 .agent-ready p:last-child { margin: 0; font-size: .93rem; }
@@ -76,6 +91,11 @@ nav a:hover { color: var(--aqua-900); }
 .button:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
 .button-primary, .button-secondary { color: var(--ink); background: var(--yellow-500); }
 .button-outline { color: var(--aqua-900); background: var(--white); border-color: var(--aqua-900); }
+
+/* .hero dat color: white cho ca vung; the nay nen sang nen phai tu lay lai mau
+   chu dam, khong thi la chu trang tren nen sang - gan nhu khong doc duoc. */
+.hero-card { color: var(--ink); background: var(--white); border: 2px solid var(--ink); border-radius: .6rem; box-shadow: .65rem .65rem 0 var(--yellow-500); }
+.hero-card .card-kicker { color: var(--aqua-900); }
 
 .signal-dashboard { padding: 1.35rem; color: var(--ink); background: var(--white); border: 2px solid var(--ink); border-radius: .6rem; box-shadow: .65rem .65rem 0 var(--yellow-500); }
 .dashboard-label { margin-bottom: 1rem; color: var(--aqua-900); font-size: .75rem; font-weight: 900; letter-spacing: .11em; }
