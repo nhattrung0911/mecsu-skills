@@ -32,3 +32,6 @@ skills/*/TODO.md
 # Anh chup man hinh va artifact cua trinh duyet khi kiem tra giao dien.
 .playwright-mcp/
 /*.png
+
+# Skill cap project: flow dung skill. La kien thuc build -> khong len GitHub.
+.claude/skills/
