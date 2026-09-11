@@ -67,6 +67,21 @@ def test_test_sinh_ra_chay_duoc(tmp_path):
     assert ket_qua.returncode == 0, ket_qua.stdout + ket_qua.stderr
 
 
+def test_cat_phan_mo_dau_thua_cua_when(tmp_path):
+    """`--when` bi dan "Use when" o dau.
+
+    Loi that, quan sat 2026-09-11: mot agent truyen ca cau "Chi dung khi can thu
+    nghiem..." va description sinh ra la "Use when Chi dung khi can thu nghiem..."
+    - thua chu, cau hong, ma khong gi bao loi.
+    """
+    kho = _kho(tmp_path)
+    assert _dung(kho, when='Chi dung khi can thu nghiem flow').returncode == 0
+
+    dau = (kho / 'lab' / 'mecsu-thu' / 'SKILL.md').read_text(encoding='utf-8')
+    assert 'Use when can thu nghiem flow' in dau, dau
+    assert 'Use when Chi dung khi' not in dau
+
+
 def test_tu_choi_ten_da_co(tmp_path):
     kho = _kho(tmp_path)
     (kho / 'skills' / 'mecsu-thu').mkdir()

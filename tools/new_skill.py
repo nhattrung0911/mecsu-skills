@@ -145,7 +145,17 @@ def kiem_trung(root: Path, ten: str) -> None:
         raise SystemExit('ten file test %s da ton tai: %s' % (ten_test, trung[0]))
 
 
+# `--when` bi dan "Use when" o dau. Nguoi goi thuong viet ca cau ("Chi dung khi...")
+# va ra "Use when Chi dung khi..." - thua chu, cau hong. Cat phan mo dau thua di.
+MO_DAU_THUA = re.compile(
+    r'^\s*(use\s+when|chỉ\s+dùng\s+khi|chi\s+dung\s+khi|dùng\s+khi|dung\s+khi|khi)\s+',
+    re.IGNORECASE)
+
+
 def dung(root: Path, ten: str, purpose: str, title: str, when: str) -> Path:
+    when = MO_DAU_THUA.sub('', when).strip()
+    if not when:
+        raise SystemExit('--when rong sau khi cat phan mo dau. Viet menh de noi tiep sau "Use when".')
     description = '%s Use when %s' % (purpose.rstrip('.') + '.', when.rstrip('.') + '.')
     if len(description) > MAX_DESCRIPTION:
         raise SystemExit(
@@ -177,7 +187,10 @@ def main() -> None:
     parser.add_argument('ten', help='Ten skill, cung la ten lenh /... Vi du: mecsu-naming')
     parser.add_argument('--purpose', required=True, help='Mot cau: skill nay lam viec gi.')
     parser.add_argument('--when', default='du lieu san pham can duoc soat lai',
-                        help='Tinh huong kich hoat, di vao description.')
+                        help='Tinh huong kich hoat, viet nhu MENH DE NOI TIEP sau "Use when". '
+                             'Vi du: --when "file Excel chi co cot ma hang" -> '
+                             '"Use when file Excel chi co cot ma hang." '
+                             'Dung viet ca cau ("Chi dung khi...") - se thanh "Use when Chi dung khi...".')
     parser.add_argument('--title', default='', help='Ten hien tren web. Mac dinh lay --purpose.')
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     args = parser.parse_args()
