@@ -118,7 +118,7 @@ summary { min-height: 2.75rem; }
 }
 
 /* --- bien mau con thieu tu lan doi theme truoc --- */
-:root { --green: var(--aqua-700); --green-dark: var(--aqua-900); --mint: #E6F6FA; }
+:root { --green: var(--aqua-700); --green-dark: var(--aqua-900); --mint: #E6F6FA; --gold: var(--yellow-500); }
 
 /* --- the chon skill --- */
 .skill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
@@ -128,23 +128,111 @@ summary { min-height: 2.75rem; }
 .skill-out { margin-bottom: 0; padding-top: .8rem; border-top: 1px dashed var(--line); color: var(--ink); font-size: .92rem; }
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-/* --- day chuyen --- */
-.pipeline { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .7rem; margin: 0; padding: 0; list-style: none; }
-.pipeline li { position: relative; padding: 1.1rem .9rem; background: #fff; border: 1px solid var(--line); border-radius: .8rem; text-align: center; }
-.pipeline h3 { margin-bottom: .3rem; font-size: .98rem; }
-.pipeline p { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-.pipe-step { display: grid; width: 1.9rem; height: 1.9rem; margin: 0 auto .7rem; place-items: center; border-radius: 50%; font-weight: 800; }
-.pipe-free { border-color: #9ad7b4; background: #f2fbf5; }
-.pipe-free .pipe-step { color: #fff; background: #2e9e63; }
-.pipe-free p { color: #2e9e63; }
-.pipe-paid { border-color: #f0a9a2; background: #fef4f3; }
-.pipe-paid .pipe-step { color: #fff; background: #d64b3c; }
-.pipe-paid p { color: #d64b3c; }
-.pipe-human { border-color: var(--aqua-500); background: var(--mint); }
-.pipe-human .pipe-step { background: transparent; font-size: 1.35rem; }
-.pipe-human p { color: var(--aqua-900); }
+/* ===========================================================================
+   BAN DO KHO
+   Ba tang bien: nguyen thuy (--aqua-*, --yellow-*) -> ngu nghia (--map-*)
+   -> thanh phan (.station, .bay). Doi mau ban do = sua khoi --map-* o duoi.
+
+   CANH BAO: duong `d` cua .map-package PHAI trung voi thuoc tinh d cua
+   <path class="map-aisle"> trong index.html. Lech thi kien hang chay sai
+   duong. tests/test_site.py co ca kiem tra dieu nay.
+   =========================================================================== */
+:root {
+  --map-floor: #FFF7E8; --map-floor-edge: #F0DFC0;
+  --map-line: #0086AA; --map-line-soft: #BFE4EE;
+  --map-free: #1F8F5F; --map-free-soft: #E4F6EC;
+  --map-paid: #D64B3C; --map-paid-soft: #FDECEA;
+  --map-human: #0086AA; --map-ink: #062B3A; --map-dim: #7A6B52;
+}
+
+.map-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem); gap: 1.5rem; align-items: start; }
+.warehouse-map { width: 100%; height: auto; overflow: visible; font-family: inherit; }
+
+.map-floor { fill: var(--map-floor); stroke: var(--map-floor-edge); stroke-width: 2; }
+.map-dot { fill: var(--map-floor-edge); }
+.map-shelf rect { fill: var(--map-floor-edge); opacity: .5; }
+
+.map-aisle { fill: none; stroke: var(--map-line-soft); stroke-width: 13; stroke-linecap: round; }
+.map-aisle-flow { fill: none; stroke: var(--map-line); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 12 20; animation: map-flow 2.4s linear infinite; }
+@keyframes map-flow { to { stroke-dashoffset: -32; } }
+
+.map-package { fill: var(--yellow-500); stroke: var(--map-ink); stroke-width: 2.5; opacity: 0; }
+@supports (offset-path: path("M 0 0 L 1 1")) {
+  .map-package {
+    opacity: 1;
+    offset-path: path("M 120 130 C 170 130 190 95 250 95 C 320 95 350 165 420 165 C 490 165 520 95 590 95 C 660 95 690 165 760 165 C 830 165 890 175 890 250 L 890 320");
+    offset-rotate: 0deg;
+    animation: map-travel 9s cubic-bezier(.55, .05, .45, .95) infinite;
+  }
+}
+@keyframes map-travel {
+  0% { offset-distance: 0%; }
+  90%, 100% { offset-distance: 100%; }
+}
+
+.gate-box { fill: var(--white); stroke: var(--map-ink); stroke-width: 2.5; }
+.gate-icon { font-size: 1.5rem; }
+.gate-label { fill: var(--map-ink); font-size: .82rem; font-weight: 800; }
+.map-caption { fill: var(--map-dim); font-size: .68rem; font-weight: 800; letter-spacing: .1em; }
+.map-gate text, .map-exit text { text-anchor: middle; }
+.map-exit-link { fill: none; stroke: var(--map-line); stroke-width: 2.5; stroke-dasharray: 5 5; }
+.map-arrow-head { fill: var(--map-line); }
+
+.station { cursor: pointer; }
+.station-hit { fill: transparent; }
+/* transform-box: fill-box la BAT BUOC. Thieu no thi goc toa do cua scale() la
+   goc viewBox chu khong phai tam hinh tron -> tram bi bay len goc trai khi hover. */
+.station-halo { fill: var(--map-free-soft); stroke: var(--map-free); stroke-width: 2; stroke-dasharray: 4 5; opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity 200ms ease, transform 200ms ease; }
+.station-dot { fill: var(--white); stroke: var(--map-free); stroke-width: 3.5; transform-box: fill-box; transform-origin: center; transition: transform 200ms ease; }
+.station-num { fill: var(--map-free); font-size: .95rem; font-weight: 900; text-anchor: middle; }
+.station-icon { font-size: 1.1rem; text-anchor: middle; }
+.station-label { fill: var(--map-ink); font-size: .82rem; font-weight: 800; text-anchor: middle; }
+
+.map-branch { fill: none; stroke: var(--map-line); stroke-width: 2.5; stroke-dasharray: 4 6; opacity: .55; stroke-linejoin: round; }
+.map-branch-label { text-anchor: start; }
+
+.station-paid .station-halo { fill: var(--map-paid-soft); stroke: var(--map-paid); }
+.station-paid .station-dot { stroke: var(--map-paid); }
+.station-paid .station-num { fill: var(--map-paid); }
+.station-human .station-halo { fill: var(--mint); stroke: var(--map-human); }
+.station-human .station-dot { stroke: var(--map-human); }
+
+.station:hover .station-halo, .station:focus .station-halo, .station.is-active .station-halo { opacity: 1; transform: scale(1.1); }
+.station:hover .station-dot, .station:focus .station-dot, .station.is-active .station-dot { transform: scale(1.14); }
+.station.is-seen .station-dot { fill: var(--map-free-soft); }
+.station-paid.is-seen .station-dot { fill: var(--map-paid-soft); }
+.station-human.is-seen .station-dot { fill: var(--mint); }
+
+.bay { cursor: pointer; }
+.bay-link { fill: none; stroke: var(--map-line); stroke-width: 2; stroke-dasharray: 4 6; opacity: .55; }
+.bay-box { fill: var(--white); stroke: var(--map-ink); stroke-width: 2.5; transform-box: fill-box; transform-origin: center; transition: fill 200ms ease; }
+.bay-tag { fill: var(--map-ink); font-size: .84rem; font-weight: 900; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.bay-sub { fill: var(--map-dim); font-size: .72rem; text-anchor: middle; }
+.bay:hover .bay-box, .bay:focus .bay-box, .bay.is-active .bay-box { fill: var(--yellow-500); }
+.bay:hover .bay-link, .bay:focus .bay-link, .bay.is-active .bay-link { opacity: 1; }
+.bay.is-seen .bay-box { stroke-dasharray: none; }
+
+.map-readout { position: sticky; top: 1.5rem; padding: 1.25rem; background: var(--white); border: 2px solid var(--map-ink); border-radius: .6rem; box-shadow: .5rem .5rem 0 var(--yellow-500); }
+.map-progress { margin: 0 0 1rem; padding-bottom: .8rem; border-bottom: 1px dashed var(--line); color: var(--map-dim); font-size: .82rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.map-progress b { color: var(--aqua-900); font-size: 1.15rem; }
+.map-info-title { margin-bottom: .3rem; font-size: 1.1rem; font-weight: 850; }
+.map-info-cost { margin-bottom: .7rem; color: var(--aqua-900); font-size: .8rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.map-info-note { margin: 0; color: var(--muted); font-size: .95rem; }
+
+.map-scroll { overflow-x: auto; }
+.map-swipe-hint { display: none; }
 
 @media (max-width: 60rem) {
   .skill-grid { grid-template-columns: 1fr; }
-  .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .map-wrap { grid-template-columns: 1fr; }
+  .map-readout { position: static; }
+  /* Ep ban do vua man hinh dien thoai thi chu con ~4px, khong doc noi.
+     Giu kich thuoc that va cho vuot ngang - dung tinh than "di kham pha ban do". */
+  .warehouse-map { min-width: 44rem; }
+  .map-swipe-hint { display: block; margin: 0 0 .5rem; color: var(--map-dim); font-size: .8rem; font-weight: 800; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-aisle-flow { animation: none; stroke-dasharray: none; stroke-width: 2.5; }
+  .map-package { animation: none; opacity: 0; }
 }

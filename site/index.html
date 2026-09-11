@@ -13,7 +13,7 @@
     <a class="skip-link" href="#noi-dung">Bỏ qua điều hướng</a>
     <header class="site-header">
       <a class="brand" href="#gioi-thieu" aria-label="Mecsu Skills trang chủ"><span class="brand-mark" aria-hidden="true">M</span><span>Mecsu Skills</span></a>
-      <nav aria-label="Điều hướng chính"><a href="#chon-skill">Chọn skill</a><a href="#day-chuyen">Dây chuyền</a><a href="#bat-dau">Bắt đầu</a><a href="#kiem-soat">Kiểm soát</a><a href="#faq">Hỏi đáp</a></nav>
+      <nav aria-label="Điều hướng chính"><a href="#ban-do">Bản đồ kho</a><a href="#chon-skill">Chọn skill</a><a href="#bat-dau">Bắt đầu</a><a href="#kiem-soat">Kiểm soát</a><a href="#faq">Hỏi đáp</a></nav>
     </header>
 
     <main id="noi-dung">
@@ -36,6 +36,106 @@
 
       <section class="proof-strip" aria-label="Cam kết"><p>Luật rẻ chạy trước</p><p>Tự kiểm tra file mình dựng ra</p><p>Chưa chắc thì để người quyết</p></section>
 
+      <section id="ban-do" class="section-shell map-section">
+        <div class="section-heading"><p class="eyebrow">Bản đồ kho</p><h2>Đi một vòng xem file của bạn qua những trạm nào.</h2><p>Rê chuột hoặc nhấn Tab vào từng trạm. Kiện hàng chạy trên băng chuyền là file Excel của bạn — chỉ một trạm duy nhất tốn tiền.</p></div>
+        <div class="map-wrap">
+          <div class="map-scroll">
+          <p class="map-swipe-hint" aria-hidden="true">Vuốt ngang để đi hết bản đồ →</p>
+          <svg class="warehouse-map" viewBox="0 0 1000 470" role="img" aria-labelledby="map-title map-desc">
+            <title id="map-title">Bản đồ kho soát dữ liệu</title>
+            <desc id="map-desc">Băng chuyền đi từ cổng nhập file qua năm trạm xử lý, tới bàn người duyệt rồi ra cửa giao. Mỗi skill là một khu riêng nối vào băng chuyền.</desc>
+            <defs>
+              <pattern id="map-grid" width="26" height="26" patternUnits="userSpaceOnUse"><circle class="map-dot" cx="2" cy="2" r="1.2" /></pattern>
+              <marker id="map-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path class="map-arrow-head" d="M 0 0 L 10 5 L 0 10 z" /></marker>
+            </defs>
+
+            <rect class="map-floor" x="0" y="0" width="1000" height="470" rx="22" />
+            <rect x="0" y="0" width="1000" height="470" rx="22" fill="url(#map-grid)" />
+
+            <g class="map-shelf" aria-hidden="true">
+              <rect x="150" y="18" width="120" height="34" rx="8" /><rect x="300" y="18" width="120" height="34" rx="8" />
+              <rect x="560" y="18" width="120" height="34" rx="8" /><rect x="710" y="18" width="120" height="34" rx="8" />
+            </g>
+
+            <path class="map-branch" d="M 120 164 L 120 300 L 700 300" />
+            <text class="map-caption map-branch-label" x="136" y="290">CÁC KHU</text>
+
+            <path class="map-aisle" d="M 120 130 C 170 130 190 95 250 95 C 320 95 350 165 420 165 C 490 165 520 95 590 95 C 660 95 690 165 760 165 C 830 165 890 175 890 250 L 890 320" />
+            <path class="map-aisle-flow" d="M 120 130 C 170 130 190 95 250 95 C 320 95 350 165 420 165 C 490 165 520 95 590 95 C 660 95 690 165 760 165 C 830 165 890 175 890 250 L 890 320" />
+            <circle class="map-package" r="8" aria-hidden="true" />
+
+            <g class="map-gate" transform="translate(72 130)">
+              <rect class="gate-box" x="-46" y="-30" width="92" height="60" rx="12" />
+              <text class="gate-icon" y="-2">📦</text>
+              <text class="gate-label" y="20">.xlsx</text>
+              <text class="map-caption" y="52">CỔNG NHẬP</text>
+            </g>
+
+            <g class="station" tabindex="0" role="button" transform="translate(250 95)"
+               data-title="Dò cột &amp; lọc chữ" data-cost="0 token"
+               data-note="Đọc header thật để biết cột nào là tên, cột nào là filter. Không đoán ra thì dừng và hỏi, chứ không đoán bừa chỉ số cột."
+               aria-label="Trạm 1, dò cột và lọc chữ, 0 token">
+              <circle class="station-hit" r="34" /><circle class="station-halo" r="28" /><circle class="station-dot" r="17" />
+              <text class="station-num" y="6">1</text><text class="station-label" y="-42">Dò cột</text>
+            </g>
+            <g class="station" tabindex="0" role="button" transform="translate(420 165)"
+               data-title="Tra chính file" data-cost="0 token"
+               data-note="Câu trả lời thường đã nằm sẵn trong file: dòng cùng nhóm, cùng hãng. Hỏi model thứ file đã biết là trả tiền cho câu trả lời có sẵn."
+               aria-label="Trạm 2, tra chính file, 0 token">
+              <circle class="station-hit" r="34" /><circle class="station-halo" r="28" /><circle class="station-dot" r="17" />
+              <text class="station-num" y="6">2</text><text class="station-label" y="-42">Tra chính file</text>
+            </g>
+            <g class="station station-paid" tabindex="0" role="button" transform="translate(590 95)"
+               data-title="Hỏi model" data-cost="trạm duy nhất tốn tiền"
+               data-note="Chỉ những câu hai tầng trước không trả lời nổi mới tới đây, và được gộp theo nhóm chứ không hỏi từng dòng."
+               aria-label="Trạm 3, hỏi model, trạm duy nhất tốn tiền">
+              <circle class="station-hit" r="34" /><circle class="station-halo" r="28" /><circle class="station-dot" r="17" />
+              <text class="station-num" y="6">3</text><text class="station-label" y="-42">💰 Hỏi model</text>
+            </g>
+            <g class="station" tabindex="0" role="button" transform="translate(760 165)"
+               data-title="Đối chiếu ngược" data-cost="0 token"
+               data-note="Giá trị model trả về phải khớp lại với chính dữ liệu trong file. Không khớp thì đánh dấu REVIEW chứ không ghi đại."
+               aria-label="Trạm 4, đối chiếu ngược, 0 token">
+              <circle class="station-hit" r="34" /><circle class="station-halo" r="28" /><circle class="station-dot" r="17" />
+              <text class="station-num" y="6">4</text><text class="station-label" y="-42">Đối chiếu ngược</text>
+            </g>
+            <g class="station" tabindex="0" role="button" transform="translate(890 250)"
+               data-title="Dựng file + tự kiểm" data-cost="0 token"
+               data-note="Skill mở lại chính file nó vừa dựng và so với bản gốc: số dòng, dòng không đụng tới, id danh mục. Lệch một chỗ là dừng."
+               aria-label="Trạm 5, dựng file và tự kiểm, 0 token">
+              <circle class="station-hit" r="34" /><circle class="station-halo" r="28" /><circle class="station-dot" r="17" />
+              <text class="station-num" y="6">5</text><text class="station-label" x="-46" y="4" text-anchor="end">Dựng file</text>
+            </g>
+
+            <g class="station station-human" tabindex="0" role="button" transform="translate(890 320)"
+               data-title="Bàn người duyệt" data-cost="chốt cuối"
+               data-note="Ô chưa đủ bằng chứng nằm lại đây. Skill đề xuất, người quyết — và việc nó từ chối báo xong là tính năng, không phải lỗi."
+               aria-label="Bàn người duyệt, chốt cuối">
+              <circle class="station-hit" r="34" /><circle class="station-halo" r="28" /><circle class="station-dot" r="19" />
+              <text class="station-icon" y="7">👤</text><text class="station-label" x="-46" y="4" text-anchor="end">Người duyệt</text>
+            </g>
+
+            <g class="map-exit" transform="translate(890 400)">
+              <path class="map-exit-link" d="M 0 -46 L 0 -22" marker-end="url(#map-arrow)" />
+              <rect class="gate-box" x="-58" y="-20" width="116" height="44" rx="12" />
+              <text class="gate-label" y="8">đã duyệt ✓</text>
+              <text class="map-caption" y="44">CỬA GIAO</text>
+            </g>
+
+            <g id="map-bays"></g>
+          </svg>
+          </div>
+
+          <aside class="map-readout" aria-label="Chi tiết trạm">
+            <p class="map-progress">Đã khám phá <b id="map-count">0</b>/<span id="map-total">0</span> trạm</p>
+            <div id="map-info" role="status" aria-live="polite">
+              <p class="map-info-title">Chưa mở trạm nào</p>
+              <p class="map-info-note">Rê chuột vào một trạm trên bản đồ, hoặc nhấn Tab để đi lần lượt bằng bàn phím.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
       <section id="chon-skill" class="section-shell">
         <div class="section-heading"><p class="eyebrow">Chọn skill</p><h2>Câu hỏi của bạn quyết định dùng skill nào.</h2></div>
         <div class="skill-grid">
@@ -52,18 +152,6 @@
             <p class="skill-out">Ra: <strong>cham_diem.xlsx</strong> — mỗi ô một dòng, xếp theo độ khó chấm</p>
           </article>
         </div>
-      </section>
-
-      <section id="day-chuyen" class="section-shell section-muted">
-        <div class="section-heading"><p class="eyebrow">Dây chuyền</p><h2>Model là tầng cuối, không phải tầng đầu.</h2><p>Mọi ô đều phải qua luật và tra chính file trước. Hỏi model thứ file đã biết là trả tiền cho câu trả lời có sẵn.</p></div>
-        <ol class="pipeline">
-          <li class="pipe-free"><span class="pipe-step">1</span><h3>Dò cột &amp; lọc chữ</h3><p>0 token</p></li>
-          <li class="pipe-free"><span class="pipe-step">2</span><h3>Tra chính file</h3><p>0 token</p></li>
-          <li class="pipe-paid"><span class="pipe-step">3</span><h3>Hỏi model</h3><p>tốn tiền</p></li>
-          <li class="pipe-free"><span class="pipe-step">4</span><h3>Đối chiếu ngược</h3><p>0 token</p></li>
-          <li class="pipe-free"><span class="pipe-step">5</span><h3>Dựng file + tự kiểm</h3><p>0 token</p></li>
-          <li class="pipe-human"><span class="pipe-step">👤</span><h3>Người duyệt</h3><p>chốt cuối</p></li>
-        </ol>
       </section>
 
       <section id="bat-dau" class="section-shell section-accent">
