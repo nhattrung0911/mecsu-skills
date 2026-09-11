@@ -78,6 +78,44 @@ def test_van_bat_duoc_script_that_su_thieu(tmp_path):
     assert 'khong ton tai' in ket_qua.stdout
 
 
+def test_soi_ca_file_trong_references(tmp_path):
+    """Lint phai doc ca *.md long trong thu muc con, khong chi tang tren cung.
+
+    Loi that, do 2026-09-11: `skill.glob('*.md')` khong de quy, nen mot file
+    references/ chua TODO, link chet VA khoi ```powershell van cho ra `0 loi`
+    exit 0. mecsu-filter co references/ that chua bao gio duoc soi.
+    """
+    _dung_skill(tmp_path, 'mecsu-thu', 'chuan-hoa.py')
+    tham_chieu = tmp_path / 'skills' / 'mecsu-thu' / 'references'
+    tham_chieu.mkdir()
+    (tham_chieu / 'tai-lieu.md').write_text(
+        '# Tai lieu\n\n- TODO: chua ai viet\n- [link chet](khong-ton-tai.md)\n',
+        encoding='utf-8')
+
+    ket_qua = _lint(tmp_path)
+    assert ket_qua.returncode != 0, 'loi trong references/ ma lint van xanh'
+    assert 'TODO' in ket_qua.stdout
+    assert 'link chet' in ket_qua.stdout
+
+
+def test_website_json_hong_thi_do(tmp_path):
+    """website.json quyet dinh skill hien the nao tren web - lint tung khong doc no."""
+    _dung_skill(tmp_path, 'mecsu-thu', 'chuan-hoa.py')
+    trang = tmp_path / 'skills' / 'mecsu-thu' / 'website.json'
+
+    trang.write_text('{ khong phai json', encoding='utf-8')
+    assert _lint(tmp_path).returncode != 0, 'JSON hong ma lint van xanh'
+
+    trang.write_text('{"title": "Thu", "purpose": "", "prompt": "Chay thu"}', encoding='utf-8')
+    ket_qua = _lint(tmp_path)
+    assert ket_qua.returncode != 0, 'purpose rong ma lint van xanh'
+    assert 'purpose' in ket_qua.stdout
+
+    trang.write_text('{"title": "Thu", "purpose": "Soat thu", "prompt": "Chay thu"}',
+                     encoding='utf-8')
+    assert _lint(tmp_path).returncode == 0, 'website.json day du ma lint van do'
+
+
 def test_dir_lab_soi_duoc_ban_nhap(tmp_path):
     (tmp_path / 'lab').mkdir()
     ket_qua = subprocess.run(

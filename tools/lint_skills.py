@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import json
 import re
 import sys
 from pathlib import Path
@@ -92,7 +93,7 @@ def check(skill: Path, fail) -> None:
         if person in description:
             fail(name, 'description khong o ngoi thu ba: %r' % person)
 
-    docs = sorted(skill.glob('*.md'))
+    docs = sorted(skill.rglob('*.md'))
     for doc in docs:
         body = doc.read_text(encoding='utf-8')
         lines = body.count('\n') + 1
@@ -119,6 +120,20 @@ def check(skill: Path, fail) -> None:
             for flag in FLAG.findall(tail):
                 if flag not in known:
                     fail(name, '%s dung %s %s nhung argparse khong nhan' % (doc.name, script, flag))
+
+    # website.json quyet dinh skill hien the nao tren web va trong
+    # public-skill-catalog.json. Truoc day lint khong he doc file nay: JSON hong
+    # thi sync_site.py chet, con o trong thi day chuoi rong len trang public.
+    trang = skill / 'website.json'
+    if trang.exists():
+        try:
+            noi_dung = json.loads(trang.read_text(encoding='utf-8'))
+        except json.JSONDecodeError as loi:
+            fail(name, 'website.json khong phai JSON hop le: %s' % loi)
+        else:
+            for khoa in ('title', 'purpose', 'prompt'):
+                if not str(noi_dung.get(khoa, '')).strip():
+                    fail(name, 'website.json thieu %r hoac de rong' % khoa)
 
     for script in sorted((skill / 'scripts').glob('*.py')):
         head = script.read_text(encoding='utf-8')[:2000]
