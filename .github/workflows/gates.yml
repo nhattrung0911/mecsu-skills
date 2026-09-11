@@ -1,0 +1,36 @@
+# Ba cong 0 token, chay moi lan push va moi pull request.
+#
+# Cong thu tu, `claude plugin validate .`, KHONG chay o day: no can Claude Code CLI,
+# thu khong co san tren runner. Cong do van phai chay bang tay truoc khi push.
+#
+# Khong test nao goi mang that - key trong test la chuoi gia - nen job nay khong
+# can secret nao ca.
+name: cong
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  kiem-tra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Cai phu thuoc
+        run: pip install -r requirements-dev.txt
+
+      - name: Test
+        run: python -m pytest -q
+
+      - name: Lint skill
+        run: python tools/lint_skills.py
+
+      - name: Website con khop thu muc skills/
+        run: python tools/sync_site.py --check

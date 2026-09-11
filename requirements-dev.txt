@@ -1,0 +1,19 @@
+# Thu can de CHAY TEST va cac cong kiem tra.
+# Nguoi chi dung skill thi khong can pytest - xem README, chi can ba dong duoi.
+#
+#     pip install -r requirements-dev.txt
+#
+# Truoc day khong co file nao khai bao phu thuoc, nen may nguoi nay cai khac may
+# nguoi kia va test xanh cho nguoi nay, do cho nguoi kia.
+
+# Skill doc va ghi file Excel.
+openpyxl>=3.1
+
+# Goi endpoint tuong thich OpenAI.
+requests>=2.31
+
+# Doc .env o goc plugin.
+python-dotenv>=1.0
+
+# Chay test.
+pytest>=8.0

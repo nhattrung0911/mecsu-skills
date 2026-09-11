@@ -9,6 +9,7 @@ qua dai, doc dai khong co muc luc. Exit khac 0 neu co loi.
 """
 from __future__ import annotations
 
+import argparse
 import ast
 import re
 import sys
@@ -25,7 +26,10 @@ MAX_SKILL_LINES = 500          # nguong hieu nang cua SKILL.md
 MIN_LINES_FOR_TOC = 100        # file tham chieu dai hon thi phai co muc luc
 
 LINK = re.compile(r'\[[^\]]*\]\(([^)#][^)]*)\)')
-COMMAND = re.compile(r'python\s+(\S*?)([A-Za-z_0-9]+\.py)((?:\s+[^\n`]*)?)')
+# Dau gach ngang PHAI nam trong nhom ten file. Thieu no thi `chuan-hoa.py` bi cat
+# thanh `hoa.py`: bao sai script khong ton tai, va te hon - neu tinh co co file
+# ten `hoa.py` that thi lint PASS NHAM.
+COMMAND = re.compile(r'python\s+(\S*?)([A-Za-z_0-9-]+\.py)((?:\s+[^\n`]*)?)')
 FLAG = re.compile(r'(?<![-\w])--[a-z][a-z0-9-]*')
 STALE = {
     '.agents/skills': 'duong dan cua ban skill cu',
@@ -116,8 +120,20 @@ def check(skill: Path, fail) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--root', type=Path, default=ROOT)
+    parser.add_argument('--dir', default='skills',
+                        help='thu muc chua skill. Dung --dir lab de soi ban nhap '
+                             'TRUOC khi chuyen sang skills/.')
+    args = parser.parse_args()
+
+    folder = args.root / args.dir
+    if not folder.is_dir():
+        raise SystemExit('khong co thu muc %s' % folder)
+
     problems: list[tuple[str, str]] = []
-    for skill in sorted(p for p in SKILLS.iterdir() if p.is_dir()):
+    for skill in sorted(p for p in folder.iterdir() if p.is_dir()):
         check(skill, lambda n, m: problems.append((n, m)))
     for skill, message in problems:
         print('%-16s %s' % (skill, message))
