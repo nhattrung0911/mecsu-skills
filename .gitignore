@@ -35,3 +35,6 @@ skills/*/TODO.md
 
 # Skill cap project: flow dung skill. La kien thuc build -> khong len GitHub.
 .claude/skills/
+
+# Thu muc tam cua pytest (pytest.ini tro vao day). Bi xoa sach moi lan chay.
+.pytest_tmp/
