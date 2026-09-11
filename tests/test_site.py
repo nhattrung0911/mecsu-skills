@@ -68,6 +68,17 @@ def test_khu_skill_dung_tu_thu_muc_skills():
         assert f'data-skill-id="{item["skill_id"]}"' in html, f"thieu data-skill-id cho {item['skill_id']}"
 
 
+def test_truong_sao_khong_nuot_click():
+    """Canvas phu kin hero. Thieu pointer-events: none thi no an het click va nut
+    "Bat dau trong 3 buoc" chet im, khong loi, khong ai biet."""
+    html = (SITE / "index.html").read_text(encoding="utf-8")
+    css = (SITE / "styles.css").read_text(encoding="utf-8")
+    assert 'class="starfield"' in html, "mat truong sao o hero"
+    khoi = re.search(r"\.starfield\s*\{([^}]*)\}", css)
+    assert khoi, "styles.css khong dinh nghia .starfield"
+    assert "pointer-events: none" in khoi.group(1), ".starfield thieu pointer-events: none"
+
+
 def test_duong_bang_chuyen_khong_lech():
     """`d` cua bang chuyen nam ca trong HTML lan trong offset-path cua CSS.
 

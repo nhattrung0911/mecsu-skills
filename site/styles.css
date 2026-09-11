@@ -67,6 +67,19 @@ nav a:hover { color: var(--aqua-900); }
 .hero::before { position: absolute; content: ""; pointer-events: none; }
 .hero::before { right: 7%; bottom: -19rem; width: 28rem; height: 28rem; border: 2rem solid rgba(255, 255, 255, .13); border-radius: 50%; }
 /* --- kien hang 3D: CSS transform, khong thu vien (CSP chan moi CDN) --- */
+/* Truong sao: phu kin hero, NAM DUOI chu va khong an chuot. Thieu mot trong hai
+   thu do thi canvas nuot nut "Bat dau trong 3 buoc". */
+.starfield { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+/* Dai ngan ha ve bang gradient tinh - khong ton mot phep tinh nao moi khung hinh.
+   Lop tren cung la dai cheo, duoi la quang sang, duoi cung la nen sau. */
+.hero {
+  background:
+    linear-gradient(104deg, transparent 30%, rgba(96, 156, 208, .20) 45%, rgba(170, 126, 86, .10) 56%, transparent 72%),
+    radial-gradient(ellipse 60% 80% at 70% 26%, rgba(20, 92, 132, .45), transparent 70%),
+    radial-gradient(ellipse at 62% 38%, #0A4C66 0%, #04384C 45%, #022734 100%);
+}
+.hero::before { opacity: .35; }
+
 /* Dat o goc phai tren, PHIA TREN the so lieu - de o giua thi de len tieu de. */
 .crate-stage { position: absolute; top: 2.2rem; right: 9%; z-index: 0; perspective: 34rem; pointer-events: none; }
 .crate { position: relative; width: var(--crate); height: var(--crate); transform-style: preserve-3d; animation: crate-spin 22s linear infinite; --crate: 7rem; --half: 3.5rem; }

@@ -121,3 +121,120 @@ function setupMap() {
 }
 
 setupMap();
+
+// ---------------------------------------------------------------------------
+// Truong sao 3 chieu cho hero. Canvas 2D, khong thu vien - CSP chan moi CDN nen
+// khong co three.js o day, va cung khong can: chieu phoi canh la mot phep chia.
+//
+// Vong lap CHI chay khi hero dang nam trong man hinh va tab dang hien. Khong co
+// hai cai khoa do thi trang van dot CPU/pin khi nguoi ta da cuon xuong duoi hoac
+// chuyen sang tab khac.
+// ---------------------------------------------------------------------------
+function setupStarfield() {
+  const canvas = document.querySelector(".starfield");
+  const ctx = canvas && canvas.getContext("2d");
+  if (!ctx) return;
+
+  const SAU = 900;                       // do sau cua khoi khong gian
+  const TIEU_CU = 380;                   // tieu cu: lon hon = goc hep hon
+  const MAU = ["#FFFFFF", "#9BE7F5", "#FFC400", "#D8F5FA"];
+  const itMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  let sao = [], rong = 0, cao = 0, khung = 0, dangChay = false;
+  let camX = 0, camY = 0, dichX = 0, dichY = 0;
+
+  const GAN = 90;                        // z nho nhat: gan hon nua thi sao to nhu cuc bong
+  const TOC = .22;                       // toc do troi NGANG trong khong gian
+
+  const moi = () => ({
+    // 62% so sao bi nen quanh mot mat phang -> thanh dai ngan ha, khong phai bui deu
+    x: (Math.random() - .5) * rong * 1.8,
+    y: (Math.random() - .5) * cao * (Math.random() < .62 ? .42 : 1.5),
+    z: GAN + Math.random() * (SAU - GAN),
+    mau: MAU[(Math.random() * MAU.length) | 0],
+    co: .35 + Math.random() * .95,
+  });
+
+  function doLai() {
+    const hop = canvas.getBoundingClientRect();
+    rong = hop.width;
+    cao = hop.height;
+    if (!rong || !cao) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(rong * dpr);
+    canvas.height = Math.round(cao * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Mat do theo dien tich, co tran tren va duoi: dien thoai ~200, desktop ~600.
+    const soSao = Math.round(Math.min(820, Math.max(220, (rong * cao) / 1200)));
+    sao = Array.from({ length: soSao }, moi);
+  }
+
+  function ve(troi) {
+    ctx.clearRect(0, 0, rong, cao);
+    camX += (dichX - camX) * .045;
+    camY += (dichY - camY) * .045;
+    const gx = rong / 2, gy = cao / 2;
+
+    for (const s of sao) {
+      // Troi NGANG, khong lao vao man hinh: lao thang la hieu ung duong ham, nhin lau chong mat.
+      // Chieu sau chi con lam thi sai - sao gan troi nhanh, sao xa gan nhu dung yen.
+      if (troi) s.x -= TOC;
+      const k = TIEU_CU / s.z;
+      let x = gx + (s.x - camX) * k;
+      const y = gy + (s.y - camY) * k;
+      // Ra khoi mep trai thi day sang phai DUNG mot man hinh, giu nguyen do sau -> khong thay nhay.
+      if (x < -40) {
+        s.x += (rong + 80) / k;
+        x = gx + (s.x - camX) * k;
+      }
+      if (x > rong + 40 || y < -30 || y > cao + 30) continue;
+      ctx.globalAlpha = Math.min(1, (1 - s.z / SAU) * 1.7);
+      ctx.fillStyle = s.mau;
+      ctx.beginPath();
+      ctx.arc(x, y, Math.min(2.6, Math.max(.35, s.co * k)), 0, 6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function vongLap() {
+    ve(true);
+    khung = requestAnimationFrame(vongLap);
+  }
+
+  function chay() {
+    if (dangChay || itMotion.matches) return;
+    dangChay = true;
+    khung = requestAnimationFrame(vongLap);
+  }
+
+  function dung() {
+    dangChay = false;
+    cancelAnimationFrame(khung);
+  }
+
+  doLai();
+  ve(false);                             // mot khung tinh: reduced-motion dung o day
+
+  // Do lai mot lan nua khi load xong: neu CSS ve sau JS thi lan do dau tien ra
+  // kich thuoc mac dinh 300x150 va truong sao ket o do.
+  window.addEventListener("load", () => { doLai(); if (!dangChay) ve(false); });
+  window.addEventListener("resize", () => { doLai(); ve(false); });
+  document.addEventListener("visibilitychange", () => (document.hidden ? dung() : chay()));
+  itMotion.addEventListener("change", () => (itMotion.matches ? dung() : chay()));
+
+  const hero = canvas.closest("section");
+  hero.addEventListener("pointermove", (e) => {
+    const hop = hero.getBoundingClientRect();
+    dichX = ((e.clientX - hop.left) / hop.width - .5) * 190;
+    dichY = ((e.clientY - hop.top) / hop.height - .5) * 130;
+  });
+  hero.addEventListener("pointerleave", () => { dichX = 0; dichY = 0; });
+
+  new IntersectionObserver(
+    ([muc]) => (muc.isIntersecting && !document.hidden ? chay() : dung()),
+    { threshold: 0 },
+  ).observe(hero);
+}
+
+setupStarfield();
