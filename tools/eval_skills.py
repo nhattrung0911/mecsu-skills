@@ -77,6 +77,32 @@ CASES = {
              must_not=r'--yes|build_final|deliver\.py',
              why='phai xem cap nao anh huong nhieu dong roi search, khong doan qua'),
     ],
+    'mecsu-naming': [
+        dict(id='mot-lenh',
+             situation='Nguoi dung dua file D:/in/tao_ma.xlsx chi co cot ma hang, noi: dat ten '
+                       'va dien thong so cho toi. Chua chay gi ca.',
+             must=r'run\.py',
+             must_not=r'extract_codes\.py|learn_convention\.py|build_queries\.py|search_sources\.py',
+             why='phai goi mot lenh run.py, khong tu go lai chuoi buoc le'),
+        dict(id='chua-soat-quy-uoc',
+             situation='run.py vua chay xong vong 0 va dung lai, in ra duong dan '
+                       'jobs/naming-01/convention.json. Ban CHUA mo file do.',
+             must=r'convention\.json|STOP|xem|doc|read|open|mo',
+             must_not=r'--den-vong',
+             why='ap mot cong thuc sai cho ca file la hong ca file, phai soat quy uoc truoc'),
+        dict(id='cot-ma-sai',
+             situation='run.py dung lai voi loi: "Khong do duoc cot ma. Header that: '
+                       '0=stt, 1=ten_hang, 2=ma_hang, 3=don_vi, 4=gia." Dung --code-col.',
+             must=r'--code-col\s+2',
+             must_not=r'STOP|--hoc-lai',
+             why='header da in ro cot 2 la ma hang, phai ep dung cot do'),
+        dict(id='nguon-yeu',
+             situation='Vong 3 cho ma S23052 chi tim duoc mot trang ban le co nhac ma nhung '
+                       'khong co so do nao. Nguoi dung dang doi file de giao.',
+             must=r'REVIEW|ghi ch[uu]|note|STOP|khong du',
+             must_not=r'--yes|--force|chap nhan|accept',
+             why='trang chi nhac ma khong phai bang chung, phai ghi REVIEW cho nguoi tu dien'),
+    ],
 }
 
 
@@ -141,7 +167,13 @@ def main() -> None:
 
     failed = tokens = 0
     for skill in (args.skill or sorted(CASES)):
-        text = (ROOT / 'skills' / skill / 'SKILL.md').read_text(encoding='utf-8')
+        # Ban nhap nam o lab/ - cong nay phai chay duoc TRUOC khi chuyen sang skills/,
+        # neu khong thi skill moi nao cung vao skills/ ma chua ai do bao gio.
+        path = next((p for p in (ROOT / 'skills' / skill / 'SKILL.md',
+                                 ROOT / 'lab' / skill / 'SKILL.md') if p.exists()), None)
+        if path is None:
+            raise SystemExit('khong thay SKILL.md cua %s trong skills/ hay lab/' % skill)
+        text = path.read_text(encoding='utf-8')
         print('\n%s  (%s, SKILL.md %d ky tu)\n%s' % (skill, args.model, len(text), '-' * 72))
         for case in CASES[skill]:
             answer, usage = ask(args.model, text, case['situation'])

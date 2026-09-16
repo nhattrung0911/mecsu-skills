@@ -17,3 +17,9 @@ python-dotenv>=1.0
 
 # Chay test.
 pytest>=8.0
+
+# Tim kiem web cho vong 2 cua mecsu-naming (tra thong so cho ma chua co gi).
+ddgs>=9.0
+
+# Doc catalog PDF o vong 3 cua mecsu-naming.
+pypdf>=4.0

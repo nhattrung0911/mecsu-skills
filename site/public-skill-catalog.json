@@ -15,6 +15,14 @@
       "onboarding_prompt": "Dùng skill mecsu-filter cho file <đường dẫn file.xlsx>. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo \"thiếu filter\" suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.",
       "website_section": "mecsu-filter",
       "contract_version": "2.0"
+    },
+    {
+      "skill_id": "mecsu-naming",
+      "public_title": "Dat ten va dien thong so tu ma hang",
+      "purpose": "Dat ten chuan tieng Viet va dien thong so ky thuat cho san pham chi co ma hang, moi gia tri kem URL nguon that",
+      "onboarding_prompt": "Dung skill mecsu-naming cho file cua toi.",
+      "website_section": "mecsu-naming",
+      "contract_version": "2.0"
     }
   ]
 }

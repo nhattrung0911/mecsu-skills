@@ -1,0 +1,15 @@
+{
+  "_ghi_chu": "Cach viet hoa cua tung hang. Khong suy ra duoc bang luat - SATA va PICUS in hoa nhung khong phai tu viet tat. Hang moi chua co o day thi danh REVIEW de nguoi chot, roi them vao file nay.",
+  "_do_ngay": "2026-09-11 tren samples/Handtools-check-cate-filter.xlsx, 5730 dong",
+  "hang": {
+    "sata": "SATA",
+    "bosi": "Bosi",
+    "anex": "Anex",
+    "tsunoda": "Tsunoda",
+    "stanley": "Stanley",
+    "asahi": "Asahi",
+    "bosch": "Bosch",
+    "kst": "KST",
+    "picus": "PICUS"
+  }
+}
