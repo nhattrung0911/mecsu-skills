@@ -92,8 +92,12 @@ def main() -> None:
         return
 
     cau_hinh = skill_env.doc_env()
-    skill_env.phai_co_key(cau_hinh)
-    tra_loi = skill_env.hoi(cau_hinh, MAU.format(du_lieu='\n'.join(mo_ta(m) for m in mau)), HE_THONG)
+    skill_env.chuan_bi(cau_hinh, args.out)
+    try:
+        tra_loi = skill_env.hoi(
+            cau_hinh, MAU.format(du_lieu='\n'.join(mo_ta(m) for m in mau)), HE_THONG)
+    except skill_env.ThieuTraLoi:
+        skill_env.chot_hoi_dap('vong-0-hoc-quy-uoc')          # thoat 4, cho agent tra loi
 
     text = tra_loi.strip()
     if text.startswith('```'):

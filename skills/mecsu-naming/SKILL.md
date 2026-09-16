@@ -8,7 +8,7 @@ description: Dat ten chuan tieng Viet va dien thong so ky thuat cho san pham chi
 Input: file Excel/CSV sản phẩm. Output: tên chuẩn theo đúng quy ước của khách + thông số, mỗi giá
 trị kèm căn cứ.
 
-> **Trạng thái: cả bốn vòng đã chạy được trên dữ liệu thật**, và đã qua cả bốn cổng.
+> **Trạng thái: cả bốn vòng đã chạy được trên dữ liệu thật**, và đã qua cả năm cổng.
 
 ## Khi nào dùng
 
@@ -29,6 +29,22 @@ trị kèm căn cứ.
 Vòng 0 là chỗ quyết định chất lượng. Không hardcode bảng ánh xạ nào: file của khách đã có sẵn
 hàng chục đến hàng nghìn tên đặt đúng kiểu của họ, và model đọc chúng để tự rút ra công thức, từ
 vựng thông số, chỗ đặt hãng và mã.
+
+## `.env` là tuỳ chọn, không bắt buộc
+
+| `.env` | Ai làm phần việc của model | Agent làm gì |
+|---|---|---|
+| có endpoint | model rẻ trong `.env` | **giám sát**: mỗi bước xong, đọc 10 dòng mẫu trong artifact vừa sinh, đối chiếu với nguồn, báo số |
+| không có | **chính agent đang chạy** | tự trả lời, rồi vẫn tự soát như trên |
+
+Có `.env` mà vẫn muốn tự làm thì đặt `MECSU_CHE_DO=agent`. Có key không có nghĩa là bị bắt xài key.
+
+Chế độ agent bàn giao qua file: script ghi câu hỏi **đã gộp lô** ra `<job>/hoi_agent/cau_hoi.json`
+rồi **thoát 4**; agent điền `tra_loi.json` rồi chạy lại **đúng lệnh cũ**. Câu trả lời của agent đi
+qua đúng đường đối chiếu ngược như của model. Mã thoát: `3` = chờ **người** soát · `4` = chờ
+**agent** trả lời · khác 0 còn lại = hỏng, không giao.
+
+Chi tiết: [`references/che_do_agent.md`](references/che_do_agent.md).
 
 ## Cách chạy
 
@@ -105,19 +121,9 @@ Mỗi luật sinh từ một lỗi đã đo, ghi trong `.kb/specs/2026-09-11-mec
 
 ## Nặng bao nhiêu
 
-Đo trên file thật 20 sản phẩm, 2026-09-11:
-
-| | |
-|---|---|
-| Cả tầng 0 token chạy lại | **~1 giây** |
-| Thư viện ngoài stdlib | chỉ `ddgs`, nạp khi cần |
-| Nguồn tải về, mỗi trang | HTML thô ~366 KB → **text nén ~7 KB** |
-| Cả job 20 sản phẩm | **128 KB** |
-
-Mặc định lưu **text đã lọc, nén gzip** — 1,2% HTML thô. Suy ra file 5.730 sản phẩm: ~24 MB thay vì
-~2 GB. Cần cấu trúc bảng (trang hãng SATA/Anex) thì `fetch_sources.py --luu html`.
-
-Cache giữ lại vì bỏ nó là trả bằng giờ: 5.730 trang × 1 giây nghỉ ≈ 1,6 tiếng mỗi lần chạy lại.
+Đo trên file thật 20 sản phẩm (2026-09-11): cả tầng 0 token chạy lại **~1 giây**, cả job
+**128 KB** vì lưu text đã lọc nén gzip — 1,2% HTML thô. Chi tiết và lý do giữ cache:
+[`references/chi_phi.md`](references/chi_phi.md).
 
 ## Vòng 3 nhận nguồn thế nào
 
@@ -133,20 +139,9 @@ Một trang chỉ **nhắc tới mã** thì chưa đủ. Ba điều kiện, cả
 Không nguồn nào đạt thì model viết **ghi chú bàn giao**: đã tìm ở đâu, thiếu gì, người cần làm gì.
 Ghi chú đó là **kết quả**, không phải lỗi.
 
-## Nhánh trang hãng — có sẵn, chưa nối vào `run.py`
+## Nhánh trang hãng
 
-Dùng cho file mà **mã suy thẳng ra URL trang hãng** (đo 2026-09-11: SATA 62,1% và Anex 3,1% của
-một file 5.730 mã). Rẻ và chính xác hơn tìm kiếm, nhưng chỉ áp được khi hãng có mẫu URL.
-
-```bash
-python ${CLAUDE_SKILL_DIR}/scripts/vendor_url.py --codes codes.json --out sources.json --check 12
-python ${CLAUDE_SKILL_DIR}/scripts/fetch_sources.py --sources sources.json --out-dir sources --luu html
-python ${CLAUDE_SKILL_DIR}/scripts/parse_vendor.py --sources-dir sources --codes codes.json --out facts.json
-python ${CLAUDE_SKILL_DIR}/scripts/ai_extract.py --facts facts.json --out ai.json
-```
-
-`--check` thử thật bằng HTTP xem mẫu URL còn đúng không — nó là **giả định về một trang web bên
-ngoài**, gãy lúc nào không ai báo. `--luu html` vì bước này cần cấu trúc bảng, không chỉ chữ.
-
-`skill_env.py` là lớp dùng chung: đọc `.env` ở gốc plugin và gọi model. Không script nào giữ key
-riêng. Nó parse **SSE** vì endpoint luôn stream kể cả khi không xin — `json.load()` chết ngay.
+Dùng cho file mà **mã suy thẳng ra URL trang hãng** (đo 2026-09-11: SATA 62,1% và Anex 3,1%
+của một file 5.730 mã). Rẻ và chính xác hơn tìm kiếm, nhưng chỉ áp được khi hãng có mẫu URL.
+Chưa nối vào `run.py`; bốn lệnh và lý do ở
+[`references/nhanh_trang_hang.md`](references/nhanh_trang_hang.md).

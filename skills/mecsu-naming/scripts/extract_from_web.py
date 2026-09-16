@@ -179,7 +179,7 @@ def main() -> None:
         raise SystemExit('khong trang nao doc duoc - dung lai.')
 
     cau_hinh = skill_env.doc_env()
-    skill_env.phai_co_key(cau_hinh)
+    skill_env.chuan_bi(cau_hinh, args.out)
 
     theo_ma: dict[str, dict] = {}
     for i in range(0, len(muc_tieu), args.batch):
@@ -188,10 +188,14 @@ def main() -> None:
         du_lieu = '\n\n'.join(
             '- mã: %s\n  tên trong file: %s\n  text từ %s:\n  %s'
             % (m['ma'], m['ten_file'], m['url'], m['text'][:args.dai_text]) for m in lo)
-        goi = doc_json(skill_env.hoi(cau_hinh, MAU.format(
-            cong_thuc=cong_thuc, du_lieu=du_lieu), HE_THONG))
+        try:
+            goi = doc_json(skill_env.hoi(cau_hinh, MAU.format(
+                cong_thuc=cong_thuc, du_lieu=du_lieu), HE_THONG))
+        except skill_env.ThieuTraLoi:
+            continue
         for r in goi.get('ket_qua', []):
             theo_ma[str(r.get('ma', '')).strip()] = r
+    skill_env.chot_hoi_dap('vong-2-rut-tu-trang-web')
 
     ket_qua = []
     for m in muc_tieu:

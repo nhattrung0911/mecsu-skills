@@ -192,7 +192,7 @@ def main() -> None:
     quy_tac = '\n'.join('  - %s' % r for r in quy_uoc.get('quy_tac', [])[:8])
 
     cau_hinh = skill_env.doc_env()
-    skill_env.phai_co_key(cau_hinh)
+    skill_env.chuan_bi(cau_hinh, args.out)
 
     theo_ma: dict[str, dict] = {}
     for i in range(0, len(can_lam), args.batch):
@@ -201,9 +201,13 @@ def main() -> None:
         prompt = MAU.format(
             cong_thuc=quyet_dinh['cong_thuc_chuan'], rang_buoc=rang_buoc, quy_tac=quy_tac,
             du_lieu='\n\n'.join(mo_ta(m) for m in lo))
-        goi = doc_json(skill_env.hoi(cau_hinh, prompt, HE_THONG))
+        try:
+            goi = doc_json(skill_env.hoi(cau_hinh, prompt, HE_THONG))
+        except skill_env.ThieuTraLoi:
+            continue                      # gom het lo con thieu roi hoi agent mot the
         for r in goi.get('ket_qua', []):
             theo_ma[str(r.get('ma', '')).strip()] = r
+    skill_env.chot_hoi_dap('vong-1-ap-quy-uoc')
 
     ket_qua, thieu = [], 0
     for muc in can_lam:

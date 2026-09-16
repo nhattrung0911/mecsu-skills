@@ -91,10 +91,13 @@ def main() -> None:
         return
 
     cau_hinh = skill_env.doc_env()
-    skill_env.phai_co_key(cau_hinh)
+    skill_env.chuan_bi(cau_hinh, args.out)
     du_lieu = '\n'.join('- mã: %s | tên trong file: %s'
                         % (m['ma_goc'], m.get('ten_file', '')) for m in can_tim)
-    goi = doc_json(skill_env.hoi(cau_hinh, MAU.format(du_lieu=du_lieu), HE_THONG))
+    try:
+        goi = doc_json(skill_env.hoi(cau_hinh, MAU.format(du_lieu=du_lieu), HE_THONG))
+    except skill_env.ThieuTraLoi:
+        skill_env.chot_hoi_dap('vong-2-dung-truy-van')
 
     theo_ma = {str(r.get('ma', '')).strip(): r for r in goi.get('ket_qua', [])}
     ket_qua, thieu = [], 0

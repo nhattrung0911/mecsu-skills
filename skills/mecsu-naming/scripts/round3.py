@@ -198,11 +198,14 @@ def main() -> None:
         return
 
     cau_hinh = skill_env.doc_env()
-    skill_env.phai_co_key(cau_hinh)
+    skill_env.chuan_bi(cau_hinh, args.out)
 
     du_lieu = '\n'.join('- %s (%s) — tên trong file: %s' % (m['ma'], m['ly_do'], m['ten_file'])
                         for m in danh_sach)
-    goi = doc_json(skill_env.hoi(cau_hinh, MAU_HOI.format(du_lieu=du_lieu), HE_THONG_HOI))
+    try:
+        goi = doc_json(skill_env.hoi(cau_hinh, MAU_HOI.format(du_lieu=du_lieu), HE_THONG_HOI))
+    except skill_env.ThieuTraLoi:
+        skill_env.chot_hoi_dap('vong-3-dung-truy-van')
     truy_van = {str(r.get('ma', '')).strip(): r.get('truy_van', [])
                 for r in goi.get('ket_qua', [])}
 
@@ -245,7 +248,10 @@ def main() -> None:
     ghi_chu: dict[str, str] = {}
     if con_thieu:
         du = '\n'.join('- %s (%s) — %s' % (m['ma'], m['ly_do'], m['ten_file']) for m in con_thieu)
-        g = doc_json(skill_env.hoi(cau_hinh, MAU_GHI.format(du_lieu=du), HE_THONG_GHI))
+        try:
+            g = doc_json(skill_env.hoi(cau_hinh, MAU_GHI.format(du_lieu=du), HE_THONG_GHI))
+        except skill_env.ThieuTraLoi:
+            skill_env.chot_hoi_dap('vong-3-ghi-chu-ban-giao')
         ghi_chu = {str(r.get('ma', '')).strip(): r.get('ghi_chu', '')
                    for r in g.get('ket_qua', [])}
 

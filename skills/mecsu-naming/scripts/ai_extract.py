@@ -122,12 +122,15 @@ def main() -> None:
         return
 
     if con_lai:
-        skill_env.phai_co_key(cau_hinh)
+        skill_env.chuan_bi(cau_hinh, args.out)
     for i in range(0, len(con_lai), kich_thuoc):
         lo = con_lai[i:i + kich_thuoc]
         print('  lo %d/%d (%d muc)...' % (i // kich_thuoc + 1, so_lo, len(lo)), flush=True)
         prompt = MAU_PROMPT.format(muc='\n\n'.join(mo_ta(m, n) for n, m in enumerate(lo, 1)))
-        tra_loi = skill_env.hoi(cau_hinh, prompt, HE_THONG)
+        try:
+            tra_loi = skill_env.hoi(cau_hinh, prompt, HE_THONG)
+        except skill_env.ThieuTraLoi:
+            continue
         goi = doc_json(tra_loi)
         theo_id = {str(r.get('id')): r for r in goi.get('ket_qua', [])}
         for muc in lo:
@@ -135,6 +138,7 @@ def main() -> None:
             if khoa in theo_id:
                 cache[khoa] = theo_id[khoa]
         duong_cache.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding='utf-8')
+    skill_env.chot_hoi_dap('nhanh-trang-hang-trich-xuat')
 
     ket_qua, thieu = [], 0
     for muc in danh_sach:

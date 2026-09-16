@@ -32,6 +32,11 @@ O_DAY = Path(__file__).resolve().parent
 def buoc(ten: str, *co) -> None:
     print('\n=== %s ===' % ten, flush=True)
     xong = subprocess.run([sys.executable, *co])
+    # Thoat 4 = che do agent dang cho cau tra loi. Van dung ca day (di tiep voi du lieu
+    # thieu moi la hong) nhung noi dung khac han. 3 la 'dung cho NGUOI soat'.
+    if xong.returncode == 4:
+        print('%s dang cho agent tra loi. Dien xong chay lai dung lenh nay.' % ten)
+        raise SystemExit(4)
     if xong.returncode != 0:
         raise SystemExit('%s thoat %d - dung ca day.' % (ten, xong.returncode))
 
