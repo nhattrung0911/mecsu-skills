@@ -35,7 +35,9 @@ def _repo(tmp_path: Path) -> Path:
     (repo / "skills").mkdir(parents=True)
     shutil.copytree(ROOT / "site", repo / "site")
     shutil.copy(ROOT / "tools" / "sync_site.py", repo / "sync_site.py")
-    shutil.copy(ROOT / "README.md", repo / "README.md")   # sync_site sinh ca README
+    # sync_site sinh ca hai file nay, thieu la no chet chu khong bo qua
+    shutil.copy(ROOT / "README.md", repo / "README.md")
+    shutil.copy(ROOT / "AGENTS.md", repo / "AGENTS.md")
     for name in ("mecsu-category", "mecsu-filter"):
         target = repo / "skills" / name
         target.mkdir()

@@ -6,8 +6,10 @@ Bản chi tiết, cầm tay chỉ việc. Bản rút gọn ở [README](../READM
 |---|---|---|---|
 | `/mecsu-category` | *Sản phẩm này có nằm đúng danh mục lá không?* | file Excel có cột mô tả + danh mục đã gán | file đã kiểm + changelog + danh sách cần người quyết |
 | `/mecsu-filter` | *Sản phẩm này đã đủ và đúng thông số chưa?* | file Excel có cột filter dạng `Key: Value` | file đã điền + bảng chấm điểm từng ô |
+| `/mecsu-naming` | *Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu?* | file Excel có cột mã hãng, tên và thông số để trống cũng được | file có tên chuẩn + thông số, mỗi giá trị kèm URL nguồn |
 
-Hai skill bổ trợ nhau: `category` lo **sản phẩm nằm ở đâu**, `filter` lo **sản phẩm có thông số gì**.
+Ba skill bổ trợ nhau: `category` lo **sản phẩm nằm ở đâu**, `filter` lo **sản phẩm có thông số gì**,
+`naming` lo **sản phẩm này là cái gì** khi trong file chưa có gì ngoài cái mã.
 
 ---
 
@@ -18,8 +20,9 @@ Hai skill bổ trợ nhau: `category` lo **sản phẩm nằm ở đâu**, `filt
 3. [Điền key một lần](#3-điền-key-một-lần)
 4. [Dùng `/mecsu-category` từng bước](#4-dùng-mecsu-category-từng-bước)
 5. [Dùng `/mecsu-filter` từng bước](#5-dùng-mecsu-filter-từng-bước)
-6. [Lỗi thường gặp và cách xử](#6-lỗi-thường-gặp-và-cách-xử)
-7. [Nguyên tắc không được phá](#7-nguyên-tắc-không-được-phá)
+6. [Dùng `/mecsu-naming` từng bước](#6-dùng-mecsu-naming-từng-bước)
+7. [Lỗi thường gặp và cách xử](#7-lỗi-thường-gặp-và-cách-xử)
+8. [Nguyên tắc không được phá](#8-nguyên-tắc-không-được-phá)
 
 ---
 
@@ -77,7 +80,7 @@ MECSU_API_KEY=<key của bạn>
 MECSU_MODELS=ag/gemini-3.7-flash-medium
 ```
 
-- **Cả hai skill đọc chung file này**, không phải điền lại ở từng skill.
+- **Cả ba skill đọc chung file này**, không phải điền lại ở từng skill.
 - Thứ tự ưu tiên: biến môi trường của máy → `.env` của skill → `.env` gốc. Nên một skill vẫn dùng
   được key riêng khi cần.
 - `.env` nằm trong `.gitignore`. **Không commit file này.**
@@ -85,7 +88,8 @@ MECSU_MODELS=ag/gemini-3.7-flash-medium
   `gemini-3.7-flash-medium` đã đo được 18/18 câu chuẩn và là model rẻ nhất trong nhóm đạt 18/18 —
   đừng đổi sang model đắt hơn nếu chưa đo lại bằng `eval_models.py`.
 
-Chưa có key vẫn chạy được hai tầng đầu của cả hai skill (dò cột, đối chiếu chữ, tra corpus) vì
+Chưa có key vẫn chạy được hai tầng đầu của cả ba skill (dò cột, đối chiếu chữ, tra corpus; riêng
+`naming` là cả vòng 0 và vòng 1) vì
 chúng **không gọi model, không tốn token**. Script tự dừng và in đường dẫn file cần điền khi tới
 bước cần key.
 
@@ -231,7 +235,79 @@ Thêm bảng mới = thêm một file `.md` đặt tên theo slug tiêu chuẩn,
 kiếm đều chặn script (DuckDuckGo trả `202 anomaly`, Mojeek trả `403`) nên bảng do **người tra một
 lần**, dây chuyền dùng lại nhiều lần.
 
-## 6. Lỗi thường gặp và cách xử
+## 6. Dùng `/mecsu-naming` từng bước
+
+Dùng khi file **chưa có gì ngoài cái mã**: không tên, hoặc có tên nhưng mỗi dòng một kiểu.
+
+### Bước 1 — Chạy vòng 0, rồi dừng lại đọc
+
+```bash
+python skills/mecsu-naming/scripts/run.py --input jobs/inbox/file.xlsx --job jobs/naming-01
+```
+
+Vòng 0 **không ra internet và không tốn token**: nó đọc chính file của bạn để rút ra quy ước đặt
+tên bạn đang dùng, rồi dừng. Đây là chỗ quyết định chất lượng cả file — một công thức sai áp cho
+5.000 dòng là hỏng cả 5.000 dòng.
+
+Mở `jobs/naming-01/convention.json` xem model rút ra cái gì, và file đang tự mâu thuẫn ở đâu.
+**Không bắt buộc điền gì**: chuẩn Mecsu nằm sẵn trong skill. Job nào cần khác chuẩn thì điền
+`_quyet_dinh_cua_nguoi.cong_thuc_chuan` — nó thắng cả chuẩn lẫn thứ model tự rút ra.
+
+Dò không ra cột mã thì skill in header thật rồi dừng. Chỉ rõ cột, đánh số từ 0:
+
+```bash
+python skills/mecsu-naming/scripts/run.py --input jobs/inbox/file.xlsx --job jobs/naming-01 --code-col 2
+```
+
+### Bước 2 — Vòng 1: áp quy ước cho dòng đã có thông tin
+
+```bash
+python skills/mecsu-naming/scripts/run.py --input jobs/inbox/file.xlsx --job jobs/naming-01 --den-vong 1
+```
+
+Vẫn chưa ra internet. Dòng nào trong file đã có sẵn mô tả hoặc thông số thì tên chuẩn dựng từ chính
+nó — không đi tìm thứ file đã tự trả lời được.
+
+### Bước 3 — Vòng 2 và 3: tra web cho dòng chỉ có mã
+
+```bash
+python skills/mecsu-naming/scripts/run.py --input jobs/inbox/file.xlsx --job jobs/naming-01 --den-vong 2 --domain-cua-minh congty.vn
+python skills/mecsu-naming/scripts/run.py --input jobs/inbox/file.xlsx --job jobs/naming-01 --den-vong 3 --domain-cua-minh congty.vn
+```
+
+`--den-vong 2` là lúc bắt đầu ra internet. `--domain-cua-minh` đánh dấu trang của chính công ty
+bạn: trang đó **không phải bằng chứng độc lập** — lấy thông số từ nó là tự xác nhận thứ mình đã
+viết ra — nên bước tải ưu tiên nguồn khác.
+
+Một trang chỉ **nhắc tới mã** thì chưa đủ làm nguồn. Ba điều kiện, cả ba đều sinh ra từ một thành
+công giả đã đo được:
+
+| Điều kiện | Lỗi nó chặn |
+|---|---|
+| Mã phải nằm trong **URL** | trang catalog liệt kê nhiều mã: `S23052` khớp nhầm trang của `S23055` |
+| Text phải có **≥2 số đo** | trang bán lẻ tên đúng nhưng không một số liệu nào |
+| Số đo phải **gần chỗ nhắc mã** | `12V 18V 20V` lấy nhầm từ menu danh mục máy pin của website |
+
+Thêm `--dry-run` vào bước gọi model để xem **số lần gọi dự kiến** trước khi tiêu tiền.
+
+### Bước 4 — Đọc ba mức trong file kết quả
+
+Kết quả ra `jobs/naming-01/ket_qua.xlsx` (đổi chỗ bằng `--out`). Năm cột mới nối sau cột gốc, **file
+gốc không bị ghi đè**: `Tên chuẩn hoá` · `Thông số` · `Nguồn` · `Trạng thái` · `Ghi chú`.
+
+| Trạng thái | Nghĩa | Bạn làm gì |
+|---|---|---|
+| `OK` | có nguồn thật, tên chứa đúng mã gốc | duyệt |
+| `REVIEW` | có nghi ngờ, cột `Ghi chú` nói rõ nghi cái gì | đọc rồi quyết |
+| trống | không tìm được gì | tự điền hoặc bỏ qua |
+
+`REVIEW` **là kết quả, không phải lỗi**. Ghi chú bàn giao nói đã tìm ở đâu, thiếu gì, người cần làm
+gì tiếp — thà vậy còn hơn điền bừa một con số trông cho đẹp.
+
+Đo trên file Hatok 20 mã: 18 `OK`, 2 `REVIEW`, 0 trống. Hai dòng `REVIEW` là hai cây bút đánh dấu
+sơn — một trang tải được nhưng không có thông số nào, một trang không tải được.
+
+## 7. Lỗi thường gặp và cách xử
 
 | Thông báo | Nghĩa | Cách xử |
 |---|---|---|
@@ -244,12 +320,14 @@ lần**, dây chuyền dùng lại nhiều lần.
 | `... pair(s) still disputed` | hai model còn bất đồng | xem [Bước 5 của category](#bước-5--giao-file) |
 | `The built workbook failed its own verification` | file dựng ra không khớp file gốc | **KHÔNG giao.** Đọc log xem lệch chỗ nào rồi dựng lại — đừng chạy lại kèm cờ khác để lách |
 | Excel mở ra thấy tiếng Việt bị vỡ | console Windows là cp1252 | không ảnh hưởng file, chỉ là hiển thị ở terminal |
+| `Khong do duoc cot ma` + header thật | `naming` không đoán ra cột mã hãng | chỉ rõ `--code-col` (đánh số từ 0), đừng để nó đoán bừa |
+| `naming` trả về nhiều dòng `REVIEW` | mã đó web không có thông số công khai | đó **không phải lỗi** — đọc cột `Ghi chú`, tra catalog giấy hoặc hỏi nhà cung cấp |
 
 **Thoát khác 0 nghĩa là KHÔNG giao.** Không phải "chạy lại kèm cờ khác cho nó qua".
 
-## 7. Nguyên tắc không được phá
+## 8. Nguyên tắc không được phá
 
-Áp cho cả hai skill, mỗi cái sinh ra từ một lỗi đã bắt được thật:
+Áp cho cả ba skill, mỗi cái sinh ra từ một lỗi đã bắt được thật:
 
 1. **Không bao giờ gọi model theo từng dòng.** Gộp trùng trước — bỏ token có chữ số (size, mã DIN,
    part number) để mọi biến thể của một sản phẩm thu về một cặp. Thấy mình đang lặp qua từng dòng
@@ -264,3 +342,8 @@ lần**, dây chuyền dùng lại nhiều lần.
    `DIN 931` nghe rất hợp lý, áp vào đẻ ra hàng nghìn lỗi giả.
 6. **Không tự chế công thức khi bảng tra thiếu cột.** Bảng không có thì để trống, để người quyết.
 7. **Không quote con số mình chưa đo.** `measure.py` sinh lại mọi con số từ artifact trên đĩa.
+8. **Tóm tắt của máy tìm kiếm không phải nguồn.** Nguồn hợp lệ chỉ là text tải về từ URL thật. Một
+   trang chỉ nhắc tới mã cũng chưa đủ — đã đo được trường hợp `S23052` khớp nhầm trang của `S23055`.
+9. **Tên mới phải chứa đúng mã gốc.** Đã đo: model tự đổi `C-1 450x16x21` thành `C1-450x16x21`
+   (4/20 dòng), và để lọt tiền tố nội bộ `SATA SAT-70303A` ra tên bán hàng (99/200 dòng, tất cả
+   đang chấm `OK`). Không khớp mã thì hạ xuống `REVIEW`, không giao thẳng.

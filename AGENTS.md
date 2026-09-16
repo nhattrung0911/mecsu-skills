@@ -18,17 +18,23 @@ cp .env.example .env                                # rồi điền, một lần
 endpoint hay tên model** — thiếu thì dừng và hỏi người dùng. Mọi skill đọc chung file này; không
 skill nào giữ key riêng.
 
-## Hai lệnh
+## Lệnh
 
+<!-- skills:bang:start -->
 | Lệnh | Trả lời câu hỏi | Cần cột gì trong file |
 |---|---|---|
-| `/mecsu-category` | danh mục lá đã gán có khớp mô tả không | mô tả + danh mục đã gán |
-| `/mecsu-filter` | thông số đã đủ và đúng chưa | filter dạng `Key: Value` |
+| `/mecsu-category` | Sản phẩm này có nằm đúng danh mục lá không? | mô tả + danh mục đã gán |
+| `/mecsu-filter` | Sản phẩm này đã đủ và đúng thông số chưa? | filter dạng `Key: Value` |
+| `/mecsu-naming` | Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu? | cột mã hãng (tên và thông số để trống cũng được) |
+<!-- skills:bang:end -->
 
+<!-- skills:run:start -->
 ```
 /mecsu-category  d:/duong-dan/file.xlsx
 /mecsu-filter    d:/duong-dan/file.xlsx
+/mecsu-naming    d:/duong-dan/file.xlsx
 ```
+<!-- skills:run:end -->
 
 Trùng tên với plugin khác thì gọi đầy đủ: `/mecsu-skills:mecsu-category`.
 
@@ -66,7 +72,7 @@ Kết quả cuối cùng luôn cần **người duyệt**. Skill đề xuất, k
 |---|---|
 | `jobs/` | file thật của người dùng. Không commit, không push, không đưa ra ngoài. |
 | `.env` | chứa key. Đã bị `.gitignore` chặn — đừng gỡ. |
-| `site/index.html` giữa `<!-- skills:start/end -->` | do `tools/sync_site.py` sinh. Sửa tay sẽ bị ghi đè. |
+| `site/index.html`, `README.md`, `AGENTS.md` ở giữa các mốc `<!-- skills:… -->` | do `tools/sync_site.py` sinh từ `skills/`. Sửa tay sẽ bị ghi đè, và CI báo đỏ. |
 | `name` trong frontmatter `SKILL.md` | đó là tên lệnh. Đổi là phá lệnh của người đang dùng. |
 
 CSP trong `site/_headers` cấm inline script/style và tài nguyên ngoài. Thêm CDN vào web sẽ bị chặn
@@ -74,13 +80,17 @@ im lặng trên production, không báo lỗi lúc dev.
 
 ## Nếu bạn có sửa code trong repo
 
-Chạy đủ ba lệnh này trước khi báo là xong. Cả ba đều 0 token:
+Chạy đủ bốn lệnh này trước khi báo là xong. Cả bốn đều 0 token:
 
 ```bash
 claude plugin validate .
 python -m pytest -q
 python tools/lint_skills.py
+python tools/sync_site.py --check
 ```
+
+Thêm skill mới thì còn một cổng nữa, `python tools/eval_skills.py --skill <tên>` — nó tiêu token
+Gemini, không phải token Claude, và chỉ chạy được khi skill đã có ca trong `CASES`.
 
 Xanh nghĩa là *thứ có test thì đúng*, không phải *mọi thứ đều đúng*. Thấy một lỗi lọt lưới thì việc
 đầu tiên là viết ca test cho loại lỗi đó, rồi mới vá.
@@ -89,6 +99,6 @@ Tên file test phải **duy nhất toàn repo** — pytest gom test theo tên fi
 
 ## Khi bí
 
-Đọc `skills/<tên-skill>/SKILL.md` — nó là nguồn sự thật cho từng lệnh. Tài liệu đi kèm khác nhau
-theo skill: `mecsu-filter` có `workflow.md` + `policy.md`, `mecsu-category` có `reference.md`. Vẫn
-không rõ thì hỏi người dùng, đừng đoán rồi chạy tiếp.
+Đọc `skills/<tên-skill>/SKILL.md` — nó là nguồn sự thật cho từng lệnh. Vẫn không rõ thì hỏi người dùng, đừng đoán rồi chạy tiếp. Tài liệu đi kèm khác nhau theo skill, xem
+thẳng thư mục của nó: `mecsu-filter` có `workflow.md` + `policy.md`, `mecsu-category` có
+`reference.md`, `mecsu-naming` có `references/naming_convention.md`.

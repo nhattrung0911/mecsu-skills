@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Them skill moi -> README tu co mat skill do.
+"""Them skill moi -> README va AGENTS.md tu co mat skill do.
 
 Da xay ra that: mecsu-naming len skills/, len site, push xong ma README van
-quang cao "Hai skill". Site co `sync_site.py --check` canh, README thi khong.
+quang cao "Hai skill" con AGENTS.md van liet ke "Hai lenh". Site co
+`sync_site.py --check` canh, hai file kia thi khong.
 """
 import shutil
 import subprocess
@@ -36,6 +37,7 @@ def _repo(tmp_path: Path) -> Path:
     shutil.copytree(ROOT / "site", repo / "site")
     shutil.copy(ROOT / "tools" / "sync_site.py", repo / "tools" / "sync_site.py")
     shutil.copy(ROOT / "README.md", repo / "README.md")
+    shutil.copy(ROOT / "AGENTS.md", repo / "AGENTS.md")
     for folder in sorted((ROOT / "skills").iterdir()):
         if not (folder / "SKILL.md").exists():
             continue
@@ -81,6 +83,22 @@ def test_chay_that_thi_readme_co_ten_skill_moi(tmp_path):
     assert "/mecsu-anh" in readme
     assert "Cat logo, xoa nen hang loat" in readme
     assert _sync(repo, "--check").returncode == 0
+
+
+def test_agents_md_cung_co_skill_moi(tmp_path):
+    """AGENTS.md la thu agent khac doc dau tien - thieu skill o day la agent khong biet no ton tai."""
+    repo = _repo(tmp_path)
+    _them_skill(repo)
+    assert _sync(repo).returncode == 0
+    assert "/mecsu-anh" in (repo / "AGENTS.md").read_text(encoding="utf-8")
+
+
+def test_them_skill_thi_check_bao_agents_lech(tmp_path):
+    repo = _repo(tmp_path)
+    _them_skill(repo)
+    ket_qua = _sync(repo, "--check")
+    assert ket_qua.returncode != 0
+    assert "AGENTS.md" in ket_qua.stdout + ket_qua.stderr
 
 
 def test_chu_ngoai_moc_khong_bi_dong_vao(tmp_path):

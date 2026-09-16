@@ -67,6 +67,7 @@ def skills_of(root: Path) -> list[dict]:
             "readme_question": site.get("readme_question",
                                         site.get("purpose", meta.get("description", ""))),
             "readme_output": site.get("readme_output", "—"),
+            "readme_needs": site.get("readme_needs", "—"),
         })
     return out
 
@@ -124,9 +125,9 @@ def splice(text: str, path: Path, name: str, body: str) -> str:
     return f"{head}{start}\n{body}\n{end}{tail}"
 
 
-def readme_run(skills: list[dict]) -> str:
+def readme_run(skills: list[dict], duong_dan: str = "d:/file.xlsx") -> str:
     width = max(len(s["skill_id"]) for s in skills)
-    lines = "\n".join(f"/{s['skill_id']:<{width}}  d:/file.xlsx" for s in skills)
+    lines = "\n".join(f"/{s['skill_id']:<{width}}  {duong_dan}" for s in skills)
     return f"```\n{lines}\n```"
 
 
@@ -146,6 +147,22 @@ def rendered_readme(root: Path, skills: list[dict]) -> str:
     return splice(text, path, "bang", readme_table(skills))
 
 
+def agents_table(skills: list[dict]) -> str:
+    rows = "\n".join(
+        "| `/{id}` | {question} | {needs} |".format(
+            id=skill["skill_id"], question=skill["readme_question"], needs=skill["readme_needs"])
+        for skill in skills)
+    return ("| Lệnh | Trả lời câu hỏi | Cần cột gì trong file |\n"
+            "|---|---|---|\n" + rows)
+
+
+def rendered_agents(root: Path, skills: list[dict]) -> str:
+    path = root / "AGENTS.md"
+    text = path.read_text(encoding="utf-8")
+    text = splice(text, path, "run", readme_run(skills, "d:/duong-dan/file.xlsx"))
+    return splice(text, path, "bang", agents_table(skills))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -157,6 +174,7 @@ def main() -> None:
         args.root / "site" / "public-skill-catalog.json": catalog_text(skills),
         args.root / "site" / "index.html": rendered_index(args.root, skills),
         args.root / "README.md": rendered_readme(args.root, skills),
+        args.root / "AGENTS.md": rendered_agents(args.root, skills),
     }
 
     stale = [path for path, wanted in targets.items()
