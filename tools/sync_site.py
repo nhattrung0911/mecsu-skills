@@ -62,12 +62,24 @@ def skills_of(root: Path) -> list[dict]:
             "onboarding_prompt": site.get("prompt", f"Dùng skill {folder.name} cho file của tôi."),
             "website_section": folder.name,
             "contract_version": CONTRACT,
+            # Chi README dung. Khong co thi lay tam purpose - README van du ten skill,
+            # chi la cot do noi chung chung hon.
+            "readme_question": site.get("readme_question",
+                                        site.get("purpose", meta.get("description", ""))),
+            "readme_output": site.get("readme_output", "—"),
         })
     return out
 
 
+CATALOG_KEYS = ("skill_id", "public_title", "purpose", "onboarding_prompt",
+                "website_section", "contract_version")
+
+
 def catalog_text(skills: list[dict]) -> str:
-    return json.dumps({"skills": skills}, ensure_ascii=False, indent=2) + "\n"
+    # Catalog la hop dong cua trang public: chi sau khoa nay, khong day them field
+    # rieng cua README vao.
+    trimmed = [{key: skill[key] for key in CATALOG_KEYS} for skill in skills]
+    return json.dumps({"skills": trimmed}, ensure_ascii=False, indent=2) + "\n"
 
 
 def sections_html(skills: list[dict]) -> str:
@@ -102,6 +114,38 @@ def rendered_index(root: Path, skills: list[dict]) -> str:
     return f"{head}{START}\n{sections_html(skills)}\n      {END}{tail}"
 
 
+def splice(text: str, path: Path, name: str, body: str) -> str:
+    """Thay doan giua hai moc mang ten `name`, giu nguyen chu hai ben."""
+    start, end = f"<!-- skills:{name}:start -->", f"<!-- skills:{name}:end -->"
+    if start not in text or end not in text:
+        raise SystemExit(f"{path} thieu moc {start} / {end}")
+    head, rest = text.split(start, 1)
+    _, tail = rest.split(end, 1)
+    return f"{head}{start}\n{body}\n{end}{tail}"
+
+
+def readme_run(skills: list[dict]) -> str:
+    width = max(len(s["skill_id"]) for s in skills)
+    lines = "\n".join(f"/{s['skill_id']:<{width}}  d:/file.xlsx" for s in skills)
+    return f"```\n{lines}\n```"
+
+
+def readme_table(skills: list[dict]) -> str:
+    rows = "\n".join(
+        "| `/{id}` | {question} | {output} | [SKILL.md](skills/{id}/SKILL.md) |".format(
+            id=skill["skill_id"], question=skill["readme_question"], output=skill["readme_output"])
+        for skill in skills)
+    return ("| Skill | Trả lời câu hỏi | Ra file | Luật |\n"
+            "|---|---|---|---|\n" + rows)
+
+
+def rendered_readme(root: Path, skills: list[dict]) -> str:
+    path = root / "README.md"
+    text = path.read_text(encoding="utf-8")
+    text = splice(text, path, "run", readme_run(skills))
+    return splice(text, path, "bang", readme_table(skills))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -112,6 +156,7 @@ def main() -> None:
     targets = {
         args.root / "site" / "public-skill-catalog.json": catalog_text(skills),
         args.root / "site" / "index.html": rendered_index(args.root, skills),
+        args.root / "README.md": rendered_readme(args.root, skills),
     }
 
     stale = [path for path, wanted in targets.items()

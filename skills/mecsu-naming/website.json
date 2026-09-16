@@ -1,5 +1,7 @@
 {
   "title": "Dat ten va dien thong so tu ma hang",
   "purpose": "Dat ten chuan tieng Viet va dien thong so ky thuat cho san pham chi co ma hang, moi gia tri kem URL nguon that",
-  "prompt": "Dung skill mecsu-naming cho file cua toi."
+  "prompt": "Dung skill mecsu-naming cho file cua toi.",
+  "readme_question": "Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu?",
+  "readme_output": "`ket_qua.xlsx`"
 }

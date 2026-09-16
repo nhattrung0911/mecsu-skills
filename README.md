@@ -7,14 +7,18 @@ flowchart LR
     F["📄 File Excel<br/>sản phẩm"] --> Q{Hỏi gì?}
     Q -->|"Danh mục gán<br/>đúng chưa?"| C["/mecsu-category"]
     Q -->|"Thông số<br/>đủ &amp; đúng chưa?"| T["/mecsu-filter"]
+    Q -->|"Chỉ có mã,<br/>chưa có tên?"| N["/mecsu-naming"]
     C --> R1["📋 changelog.xlsx<br/><i>người duyệt</i>"]
     T --> R2["📋 cham_diem.xlsx<br/><i>người chấm</i>"]
+    N --> R3["📋 ket_qua.xlsx<br/><i>người soát</i>"]
 
     style F fill:#e8f0fe,stroke:#4285f4
     style C fill:#fef7e0,stroke:#f9ab00
     style T fill:#fef7e0,stroke:#f9ab00
+    style N fill:#fef7e0,stroke:#f9ab00
     style R1 fill:#e6f4ea,stroke:#34a853
     style R2 fill:#e6f4ea,stroke:#34a853
+    style R3 fill:#e6f4ea,stroke:#34a853
 ```
 
 ## Dây chuyền — LLM là tầng cuối
@@ -54,10 +58,13 @@ cp .env.example .env      # điền MECSU_BASE_URL + MECSU_API_KEY, một lần 
 
 ## Chạy
 
+<!-- skills:run:start -->
 ```
 /mecsu-category  d:/file.xlsx
 /mecsu-filter    d:/file.xlsx
+/mecsu-naming    d:/file.xlsx
 ```
+<!-- skills:run:end -->
 
 ```mermaid
 flowchart LR
@@ -73,12 +80,15 @@ flowchart LR
 
 > ⚠️ Thoát khác 0 = **không giao**. Không phải "chạy lại kèm cờ khác cho qua".
 
-## Hai skill
+## Skill trong kho
 
-| Skill | Trả lời câu hỏi | Cần cột gì | Ra file |
+<!-- skills:bang:start -->
+| Skill | Trả lời câu hỏi | Ra file | Luật |
 |---|---|---|---|
-| `/mecsu-category` | Sản phẩm này có nằm đúng danh mục lá không? | mô tả + danh mục đã gán | `changelog.xlsx` |
-| `/mecsu-filter` | Sản phẩm này đã đủ và đúng thông số chưa? | filter dạng `Key: Value` | `cham_diem.xlsx` |
+| `/mecsu-category` | Sản phẩm này có nằm đúng danh mục lá không? | `changelog.xlsx` | [SKILL.md](skills/mecsu-category/SKILL.md) |
+| `/mecsu-filter` | Sản phẩm này đã đủ và đúng thông số chưa? | `cham_diem.xlsx` | [SKILL.md](skills/mecsu-filter/SKILL.md) |
+| `/mecsu-naming` | Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu? | `ket_qua.xlsx` | [SKILL.md](skills/mecsu-naming/SKILL.md) |
+<!-- skills:bang:end -->
 
 Bỏ file cần xử lý vào `jobs/inbox/`. Output mỗi lần chạy nằm trong `jobs/` và **không** lên GitHub.
 
@@ -88,5 +98,4 @@ Bỏ file cần xử lý vào `jobs/inbox/`. Output mỗi lần chạy nằm tro
 |---|---|
 | 🤖 Bạn là AI agent vừa clone repo này? | [AGENTS.md](AGENTS.md) |
 | 📘 Hướng dẫn chi tiết, bảng lỗi thường gặp | [docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md) |
-| ⚙️ Luật của `/mecsu-category` | [SKILL.md](skills/mecsu-category/SKILL.md) · [reference.md](skills/mecsu-category/reference.md) |
-| ⚙️ Luật của `/mecsu-filter` | [SKILL.md](skills/mecsu-filter/SKILL.md) · [workflow.md](skills/mecsu-filter/workflow.md) · [policy.md](skills/mecsu-filter/policy.md) |
+| ⚙️ Luật của từng skill | cột **Luật** ở bảng trên |

@@ -1,5 +1,7 @@
 {
   "title": "soát danh mục đã gán",
   "purpose": "Đối chiếu mô tả sản phẩm với danh mục lá đang mang. Danh mục hiện có là bằng chứng để đi kiểm, không gán lại từ đầu. Kết quả ra changelog.xlsx cho người duyệt.",
-  "prompt": "Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file <đường dẫn file.xlsx>. Chạy lô hiệu chuẩn trước và dừng lại cho tôi đọc, đừng tự đặt --yes. Sau khi chạy đủ, hãy nói rõ: bao nhiêu cặp bị chấm sai, bao nhiêu cặp hai model bất đồng, và bao nhiêu sản phẩm không có danh mục hợp lệ nào. Chỉ báo hoàn tất khi changelog đã dựng xong và tự kiểm tra đã pass."
+  "prompt": "Dùng skill mecsu-category để kiểm tra danh mục đã gán trong file <đường dẫn file.xlsx>. Chạy lô hiệu chuẩn trước và dừng lại cho tôi đọc, đừng tự đặt --yes. Sau khi chạy đủ, hãy nói rõ: bao nhiêu cặp bị chấm sai, bao nhiêu cặp hai model bất đồng, và bao nhiêu sản phẩm không có danh mục hợp lệ nào. Chỉ báo hoàn tất khi changelog đã dựng xong và tự kiểm tra đã pass.",
+  "readme_question": "Sản phẩm này có nằm đúng danh mục lá không?",
+  "readme_output": "`changelog.xlsx`"
 }

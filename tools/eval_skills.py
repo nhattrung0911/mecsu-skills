@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Do xem mot model doc SKILL.md xong co lam DUNG khong - chay tren 9router, 0 token Claude.
 
-    python tools/eval_skills.py                      # ca hai skill
+    python tools/eval_skills.py                      # moi skill co ca trong CASES
     python tools/eval_skills.py --skill mecsu-filter --model ag/gemini-3.7-flash-medium
 
 Moi ca la mot tinh huong that da tung sai. Model chi duoc doc SKILL.md roi tra ve

@@ -1,5 +1,7 @@
 {
   "title": "soát và bổ sung thông số",
   "purpose": "Bắt lỗi format tên, mâu thuẫn tên với filter và filter thiếu; rồi điền giá trị cụ thể kèm căn cứ, không chỉ báo thiếu. Kết quả ra cham_diem.xlsx, mỗi ô một dòng xếp theo độ khó chấm.",
-  "prompt": "Dùng skill mecsu-filter cho file <đường dẫn file.xlsx>. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo \"thiếu filter\" suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại."
+  "prompt": "Dùng skill mecsu-filter cho file <đường dẫn file.xlsx>. Chạy hai tầng miễn phí trước (luật và tra chính file), rồi dừng ở lô hiệu chuẩn cho tôi đọc. Mỗi filter đề xuất phải kèm GIÁ TRỊ cụ thể và căn cứ, không chấp nhận báo \"thiếu filter\" suông. Ô nào corpus không đồng ý thì đánh dấu REVIEW, đừng tự loại.",
+  "readme_question": "Sản phẩm này đã đủ và đúng thông số chưa?",
+  "readme_output": "`cham_diem.xlsx`"
 }
