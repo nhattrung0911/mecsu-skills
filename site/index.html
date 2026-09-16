@@ -147,25 +147,33 @@
       <section id="chon-skill" class="section-shell">
         <div class="section-heading"><p class="eyebrow">Chọn skill</p><h2>Câu hỏi của bạn quyết định dùng skill nào.</h2></div>
         <div class="skill-grid">
+<!-- skills:the:start -->
           <article class="skill-card">
             <p class="skill-tag">/mecsu-category</p>
             <h3>Danh mục gán đúng chưa?</h3>
-            <p>Đối chiếu mô tả sản phẩm với danh mục lá đang mang. Danh mục hiện có là <em>bằng chứng để đi kiểm</em>, không gán lại từ đầu.</p>
+            <p>Đối chiếu mô tả sản phẩm với danh mục lá đang mang. Danh mục hiện có là bằng chứng để đi kiểm, không gán lại từ đầu.</p>
             <p class="skill-out">Ra: <strong>changelog.xlsx</strong> — người duyệt trước khi giao</p>
           </article>
           <article class="skill-card">
             <p class="skill-tag">/mecsu-filter</p>
             <h3>Thông số đủ và đúng chưa?</h3>
-            <p>Bắt lỗi format tên, mâu thuẫn tên ↔ filter, filter thiếu; rồi điền giá trị cụ thể kèm căn cứ, không chỉ báo "thiếu".</p>
+            <p>Bắt lỗi format tên, mâu thuẫn tên ↔ filter, filter thiếu; rồi điền giá trị cụ thể kèm căn cứ, không chỉ báo &quot;thiếu&quot;.</p>
             <p class="skill-out">Ra: <strong>cham_diem.xlsx</strong> — mỗi ô một dòng, xếp theo độ khó chấm</p>
           </article>
+          <article class="skill-card">
+            <p class="skill-tag">/mecsu-naming</p>
+            <h3>Chỉ có mã, chưa biết là cái gì?</h3>
+            <p>Đọc chính file để rút ra quy ước đặt tên của bạn, rồi tra web điền tên và thông số cho dòng chỉ có mã. Mỗi giá trị kèm URL nguồn thật.</p>
+            <p class="skill-out">Ra: <strong>ket_qua.xlsx</strong> — OK · REVIEW · trống, không đoán bừa</p>
+          </article>
+<!-- skills:the:end -->
         </div>
       </section>
 
       <section id="bat-dau" class="section-shell section-accent">
         <div class="section-heading compact-heading"><p class="eyebrow">Bắt đầu</p><h2>Copy đoạn dưới, dán vào AI của bạn.</h2></div>
         <div class="prompt-card">
-          <template id="prompt-bootstrap">Cài plugin skill từ repo https://github.com/nhattrung0911/mecsu-skills cho môi trường hiện tại. Với Claude Code: /plugin marketplace add nhattrung0911/mecsu-skills rồi /plugin install mecsu-skills@mecsu-skills. Môi trường khác thì lấy nguyên thư mục skills/mecsu-category và skills/mecsu-filter, giữ nguyên SKILL.md, scripts và references, không ghi đè skill khác. Cài xong hãy xác nhận skill đã được nhận diện và cho biết cần cài thêm gì (Python 3.11+, openpyxl, requests, python-dotenv) và có phải mở phiên mới không.</template>
+          <template id="prompt-bootstrap">Cài plugin skill từ repo https://github.com/nhattrung0911/mecsu-skills cho môi trường hiện tại. Với Claude Code: /plugin marketplace add nhattrung0911/mecsu-skills rồi /plugin install mecsu-skills@mecsu-skills. Môi trường khác thì lấy nguyên các thư mục con trong skills/, giữ nguyên SKILL.md, scripts và references, không ghi đè skill khác. Cài xong hãy xác nhận skill đã được nhận diện và cho biết cần cài thêm gì (Python 3.11+, openpyxl, requests, python-dotenv) và có phải mở phiên mới không.</template>
           <p class="prompt-text">Cài plugin skill từ repo <span class="mono">nhattrung0911/mecsu-skills</span>, xác nhận skill đã nhận diện, và cho biết cần cài thêm gì.</p>
           <button class="button button-secondary" type="button" data-copy-prompt="bootstrap">Sao chép yêu cầu cài</button>
         </div>

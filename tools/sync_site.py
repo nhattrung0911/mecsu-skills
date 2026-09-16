@@ -68,6 +68,13 @@ def skills_of(root: Path) -> list[dict]:
                                         site.get("purpose", meta.get("description", ""))),
             "readme_output": site.get("readme_output", "—"),
             "readme_needs": site.get("readme_needs", "—"),
+            # The o muc "Chon skill" tren web. Khong khai thi lay tam tu cac khoa tren -
+            # the van dung, chi la khong gon bang cau viet rieng cho no.
+            "card_title": site.get("card_title",
+                                   site.get("readme_question", meta.get("name", folder.name))),
+            "card_body": site.get("card_body", site.get("purpose", meta.get("description", ""))),
+            "card_output": site.get("card_output", site.get("readme_output", "—")).strip("`"),
+            "card_note": site.get("card_note", ""),
         })
     return out
 
@@ -105,6 +112,22 @@ def sections_html(skills: list[dict]) -> str:
     return "\n".join(blocks)
 
 
+def cards_html(skills: list[dict]) -> str:
+    """Khoi 'Chon skill' - the dau tien nguoi doc thay, truoc day viet tay nen hay lech."""
+    blocks = []
+    for skill in skills:
+        note = f' — {escape(skill["card_note"])}' if skill["card_note"] else ""
+        blocks.append(
+            f'          <article class="skill-card">\n'
+            f'            <p class="skill-tag">/{escape(skill["skill_id"])}</p>\n'
+            f'            <h3>{escape(skill["card_title"])}</h3>\n'
+            f'            <p>{escape(skill["card_body"])}</p>\n'
+            f'            <p class="skill-out">Ra: <strong>{escape(skill["card_output"])}</strong>'
+            f'{note}</p>\n'
+            f'          </article>')
+    return "\n".join(blocks)
+
+
 def rendered_index(root: Path, skills: list[dict]) -> str:
     path = root / "site" / "index.html"
     html = path.read_text(encoding="utf-8")
@@ -112,7 +135,8 @@ def rendered_index(root: Path, skills: list[dict]) -> str:
         raise SystemExit(f"{path} thieu moc {START} / {END}")
     head, rest = html.split(START, 1)
     _, tail = rest.split(END, 1)
-    return f"{head}{START}\n{sections_html(skills)}\n      {END}{tail}"
+    html = f"{head}{START}\n{sections_html(skills)}\n      {END}{tail}"
+    return splice(html, path, "the", cards_html(skills))
 
 
 def splice(text: str, path: Path, name: str, body: str) -> str:

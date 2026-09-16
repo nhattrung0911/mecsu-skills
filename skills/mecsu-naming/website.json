@@ -4,5 +4,8 @@
   "prompt": "Dung skill mecsu-naming cho file cua toi.",
   "readme_question": "Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu?",
   "readme_output": "`ket_qua.xlsx`",
-  "readme_needs": "cột mã hãng (tên và thông số để trống cũng được)"
+  "readme_needs": "cột mã hãng (tên và thông số để trống cũng được)",
+  "card_title": "Chỉ có mã, chưa biết là cái gì?",
+  "card_body": "Đọc chính file để rút ra quy ước đặt tên của bạn, rồi tra web điền tên và thông số cho dòng chỉ có mã. Mỗi giá trị kèm URL nguồn thật.",
+  "card_note": "OK · REVIEW · trống, không đoán bừa"
 }

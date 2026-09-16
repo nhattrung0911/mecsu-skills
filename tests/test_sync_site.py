@@ -74,6 +74,21 @@ def test_skill_moi_tu_len_website(tmp_path):
     assert WEBSITE_JSON["prompt"] in html
 
 
+def test_the_chon_skill_cung_co_skill_moi(tmp_path):
+    """Khoi the o muc 'Chon skill' truoc day viet tay, nen them skill thu ba la no van hai the."""
+    repo = _repo(tmp_path)
+    skill = repo / "skills" / "mecsu-anh"
+    skill.mkdir()
+    (skill / "SKILL.md").write_text(SKILL_MOI, encoding="utf-8")
+    (skill / "website.json").write_text(json.dumps(WEBSITE_JSON, ensure_ascii=False), encoding="utf-8")
+
+    assert _sync(repo).returncode == 0
+    html = (repo / "site" / "index.html").read_text(encoding="utf-8")
+    khoi = html.split("<!-- skills:the:start -->")[1].split("<!-- skills:the:end -->")[0]
+    assert khoi.count('class="skill-card"') == 3
+    assert "/mecsu-anh" in khoi
+
+
 def test_check_bao_loi_khi_site_lech(tmp_path):
     """--check dung cho lint/CI: site lech thi thoat khac 0, khong tu sua."""
     repo = _repo(tmp_path)
