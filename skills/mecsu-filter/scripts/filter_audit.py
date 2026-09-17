@@ -16,7 +16,16 @@ GRP = re.compile(r'^(.*?)\s+(?:Of|Của)\s+(.+)$', re.I)
 
 # ---------- parse ----------
 def parse_filters(e):
-    """-> list[(key, value)] giu thu tu, va co the trung key."""
+    """-> list[(key, value)] giu thu tu, va co the trung key.
+
+    O de trong trong Excel ve day la None, KHONG phai chuoi rong. Bo qua buoc nay
+    thi `str(None)` thanh chuoi "None" va sinh ra mot cap filter gia ('None', ''),
+    nen o trong bi coi la CO filter. Da do tren 100 dong that: 30 o trong -> audit
+    bao "0 o filter con thieu" -> hang doi rong -> ca day chuyen chet, va nhung dong
+    do con lot vao tap peer hop le lam ca cum khong hoc duoc thuoc tinh nao.
+    """
+    if e is None:
+        return []
     out = []
     for p in SEP.split(str(e)):
         p = p.strip()
