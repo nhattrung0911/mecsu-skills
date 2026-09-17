@@ -63,7 +63,7 @@ Khong them chu nao ngoai mang JSON."""
 
 def load_config():
     """Key dien mot lan o .env goc plugin; NF_* trong .env cu van chay."""
-    return skill_env.load_llm_config(legacy_prefix='NF')
+    return skill_env.load_llm_config(legacy_prefix='NF', bat_buoc=False)
 
 
 def read_completion(response):
@@ -230,6 +230,12 @@ def retry_after(response, default=75, cap=180):
 
 
 def call_model(config, model, batch, group, vocabs, tables=(), retries=3):
+    if not skill_env.co_llm(config):
+        # Che do agent: cung SYSTEM_PROMPT, cung user message da gop lo. Cau tra loi
+        # di qua dung parse_array nhu cua model - khong uu ai.
+        noi_dung = skill_env.hoi_agent(SYSTEM_PROMPT,
+                                       build_user_message(batch, group, vocabs, tables))
+        return parse_array(noi_dung), {}
     payload = {
         'model': model,
         'temperature': config['temperature'],
@@ -311,6 +317,7 @@ def main():
     slug = re.sub(r'[^a-z0-9]+', '-', model.lower()).strip('-')
     args.output_dir.mkdir(parents=True, exist_ok=True)
     out_path = args.output_dir / ('ai_values_' + slug + '.json')
+    skill_env.chuan_bi(config, out_path)
     done = {}
     if out_path.exists() and not args.restart:
         done = json.loads(out_path.read_text(encoding='utf-8'))
@@ -365,6 +372,8 @@ def main():
                     ask = by_id.get(int(ans.get('id', -1)))
                     if ask:
                         done[ask.get('key_hash', str(ask['ask_id']))] = ans
+            except skill_env.ThieuTraLoi:
+                pass              # cho agent tra loi, KHONG phai that bai
             except Exception as error:  # noqa: BLE001
                 failures += 1
                 with _lock:
@@ -376,6 +385,7 @@ def main():
                 with _lock:
                     print('  %d/%d batch, %d tra loi' % (completed, len(batches), len(done)))
     out_path.write_text(json.dumps(done, ensure_ascii=False, indent=1), encoding='utf-8')
+    skill_env.chot_hoi_dap('ai_fill')      # che do agent: thoat 4 neu con cau chua tra loi
 
     rows, stats = [], collections.Counter()
     for ask in asks:

@@ -54,7 +54,7 @@ _print_lock = threading.Lock()
 
 def load_config() -> dict:
     """Key goes in the plugin-root .env once; an old ONCHECK_* .env still works."""
-    return skill_env.load_llm_config(legacy_prefix="ONCHECK")
+    return skill_env.load_llm_config(legacy_prefix="ONCHECK", bat_buoc=False)
 
 
 def read_completion(response: requests.Response) -> tuple[str, dict]:
@@ -121,6 +121,11 @@ def build_user_message(batch: list[dict], level1: str, leaves: list[str] | None)
 def call_model(
     config: dict, model: str, batch: list[dict], level1: str, leaves: list[str] | None, retries: int = 3
 ) -> tuple[list[dict], dict]:
+    if not skill_env.co_llm(config):
+        # Che do agent: cung SYSTEM_PROMPT, cung user message da gop lo. Cau tra loi
+        # di qua dung parse_verdicts nhu cua model - khong uu ai.
+        noi_dung = skill_env.hoi_agent(SYSTEM_PROMPT, build_user_message(batch, level1, leaves))
+        return parse_verdicts(noi_dung), {}
     payload = {
         "model": model,
         "temperature": config["temperature"],
@@ -178,6 +183,7 @@ def main() -> None:
     if args.tag:
         slug = f"{slug}__{re.sub(r'[^a-z0-9]+', '-', args.tag.lower()).strip('-')}"
     verdict_path = args.output_dir / f"ai_verdicts_{slug}.json"
+    skill_env.chuan_bi(config, verdict_path)
     done: dict[str, dict] = {}
     if verdict_path.exists() and not args.restart:
         done = {str(k): v for k, v in json.loads(verdict_path.read_text(encoding="utf-8")).items()}
@@ -226,6 +232,8 @@ def main() -> None:
                         # is reassigned whenever the input changes, and a resumed run then
                         # hands old answers to different products.
                         done[pair_key(pair)] = verdict
+            except skill_env.ThieuTraLoi:
+                pass              # cho agent tra loi, KHONG phai that bai
             except Exception as error:  # noqa: BLE001 - a dead batch must not kill the run
                 failures += 1
                 with _print_lock:
@@ -237,6 +245,7 @@ def main() -> None:
                     print(f"  {completed}/{len(batches)} batches, {len(done)} verdicts")
 
     verdict_path.write_text(json.dumps(done, ensure_ascii=False, indent=1), encoding="utf-8")
+    skill_env.chot_hoi_dap("ai_check")     # che do agent: thoat 4 neu con cau chua tra loi
 
     # A suggestion is only actionable if it names a leaf that really exists under that level1.
     leaf_ids = queue.get("leaf_ids", {})

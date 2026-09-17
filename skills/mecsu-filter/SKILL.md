@@ -31,6 +31,16 @@ Cứ chạy trước — hai tầng đầu **không cần key**, và script tự
 điền nếu thiếu. Lúc đó mới hỏi người dùng endpoint 9router + key + model, đừng tự đoán. Cần Python 3.11+ với `openpyxl`,
 `requests`, `python-dotenv`.
 
+## `.env` là tuỳ chọn
+
+Endpoint trong `.env` mua thêm một model rẻ, **không phải điều kiện để chạy**. Không có nó thì
+chính agent đang chạy làm phần việc đó: script ghi câu hỏi đã gộp lô ra `<thư mục out>/hoi_agent/
+cau_hoi.json` rồi **thoát 4**; agent điền `tra_loi.json` rồi chạy lại đúng lệnh cũ. Câu trả lời của
+agent đi qua **đúng đường đối chiếu ngược** như của model.
+
+Có `.env` mà vẫn muốn tự làm: `MECSU_CHE_DO=agent`. Mã thoát: `3` chờ người soát · `4` chờ agent
+trả lời · khác 0 còn lại là hỏng, không giao.
+
 ## Luật không được phá
 
 1. **Không rule cứng theo ngành.** Mọi quy ước format đều đo từ chính file đang xử lý.
