@@ -20,6 +20,10 @@ import re
 from pathlib import Path
 
 from learn_deps import lookup
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 
 # Nhung thuoc tinh KHONG phai thong so ky thuat: the phan nganh / thuong hieu /

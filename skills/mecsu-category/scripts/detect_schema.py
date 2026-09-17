@@ -14,6 +14,10 @@ from pathlib import Path
 import openpyxl
 
 from common import OPTIONAL_ROLES, REQUIRED_ROLES, ROLES, fold, job_root
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 ROOT = job_root()
 DEFAULT_DIR = ROOT / "jobs" / "oncheck"

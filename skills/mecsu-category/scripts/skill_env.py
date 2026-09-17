@@ -77,6 +77,10 @@ def load_llm_config(legacy_prefix: str | None = None, bat_buoc: bool = True) -> 
 import hashlib
 import json
 import threading
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 THOAT_CAN_AGENT = 4          # 3 da danh cho "dung cho NGUOI soat" - dung trung la agent
                              # se di tra loi nhung cau hoi khong ton tai.

@@ -17,6 +17,10 @@ import re
 from pathlib import Path
 
 from common import fold, job_root, pair_key, write_rows
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 ROOT = job_root()
 DEFAULT_DIR = ROOT / "jobs" / "oncheck"

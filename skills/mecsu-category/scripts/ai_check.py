@@ -19,6 +19,10 @@ import requests
 import skill_env
 
 from common import fold, job_root, pair_key, write_rows
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 HERE = Path(__file__).resolve().parent
 ROOT = job_root()

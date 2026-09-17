@@ -12,6 +12,10 @@ import json
 from pathlib import Path
 
 from common import HEADERS, SHEET, fold, job_root, pattern, read_rows, verdict_key, write_rows
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 ROOT = job_root()
 DEFAULT_INPUT = ROOT / "jobs" / "inbox" / "On_web_category.xlsx"

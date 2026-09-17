@@ -27,6 +27,10 @@ import requests
 import skill_env
 
 from verify_values import measure
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 HERE = Path(__file__).resolve().parent
 SEP = '\x1f'

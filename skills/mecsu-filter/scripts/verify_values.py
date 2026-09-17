@@ -18,6 +18,10 @@ import json
 import pickle
 import re
 from pathlib import Path
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 NUM = re.compile(r'-?\d+(?:[.,]\d+)?')
 # Gia tri DO DUOC: ca chuoi la mot con so kem don vi. Khong dung NUM.search cho

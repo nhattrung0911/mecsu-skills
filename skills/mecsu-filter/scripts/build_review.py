@@ -20,6 +20,10 @@ import openpyxl
 from openpyxl.styles import Alignment, Font, PatternFill
 
 import verify_values as vv
+import sys
+
+if hasattr(sys.stdout, 'reconfigure'):      # console Windows mac dinh la cp1252
+    sys.stdout.reconfigure(encoding='utf-8')
 
 COLS = [
     ('stt', 'STT', 6), ('cham', 'CHAM (dung/sai/?)', 16),
