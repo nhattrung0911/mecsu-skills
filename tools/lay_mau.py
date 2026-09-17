@@ -31,6 +31,9 @@ def main() -> None:
     parser.add_argument('--rows', type=int, default=100)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--sheet', default='', help='Ten sheet. Mac dinh sheet dau tien.')
+    parser.add_argument('--xoa-cot', default='',
+                        help='Ten cot de XOA TRANG mot so o (hold-out). Dap an ghi ra file ben canh.')
+    parser.add_argument('--xoa-so-o', type=int, default=0, help='Xoa trang bao nhieu o.')
     args = parser.parse_args()
 
     if not args.input.exists():
@@ -53,14 +56,45 @@ def main() -> None:
     else:
         chon = sorted(random.Random(args.seed).sample(range(len(du_lieu)), args.rows))
 
+    lay = [list(du_lieu[i]) for i in chon]
+
+    # Hold-out: xoa trang o DA BIET dap an. Khong phai bia du lieu - la BO du lieu,
+    # va giu lai dap an de cham do chinh xac cua thu skill dien vao.
+    dap_an: dict = {}
+    if args.xoa_cot:
+        ten_cot = [str(v) if v is not None else '' for v in header]
+        if args.xoa_cot not in ten_cot:
+            raise SystemExit('khong co cot %r. Cot that: %s' % (args.xoa_cot, ten_cot))
+        cot = ten_cot.index(args.xoa_cot)
+        if args.xoa_so_o < 1:
+            raise SystemExit('--xoa-cot phai di kem --xoa-so-o >= 1')
+        co_gia_tri = [j for j, h in enumerate(lay) if str(h[cot] or '').strip()]
+        if args.xoa_so_o > len(co_gia_tri):
+            raise SystemExit('xin xoa %d o nhung chi co %d o co gia tri trong %d dong da chon'
+                             % (args.xoa_so_o, len(co_gia_tri), len(lay)))
+        # Khoa nhan dien dong: uu tien part_number, khong co thi cot dau.
+        cot_khoa = ten_cot.index('part_number') if 'part_number' in ten_cot else 0
+        for j in sorted(random.Random(args.seed + 1).sample(co_gia_tri, args.xoa_so_o)):
+            dap_an[str(lay[j][cot_khoa])] = lay[j][cot]
+            lay[j][cot] = None
+
     ra = openpyxl.Workbook()
     dich = ra.active
     dich.title = ws.title[:31]
     dich.append(list(header))
-    for i in chon:
-        dich.append(list(du_lieu[i]))
+    for hang_ra in lay:
+        dich.append(hang_ra)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     ra.save(args.out)
+
+    if dap_an:
+        import json
+        ben_canh = args.out.parent / (args.out.stem + '.dap_an.json')
+        ben_canh.write_text(json.dumps(
+            {'nguon': str(args.input), 'seed': args.seed, 'cot': args.xoa_cot,
+             'khoa_la_cot': ten_cot[cot_khoa], 'da_xoa': dap_an},
+            ensure_ascii=False, indent=2), encoding='utf-8')
+        print('da xoa    %d o cot %r -> dap an o %s' % (len(dap_an), args.xoa_cot, ben_canh))
 
     print('nguon      %s  (%d dong du lieu)' % (args.input, len(du_lieu)))
     print('seed       %d' % args.seed)
