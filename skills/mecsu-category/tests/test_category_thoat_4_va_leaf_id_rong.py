@@ -102,3 +102,29 @@ def test_id_rong_duoi_moi_dang_deu_duoc_bo_qua():
         xung_dot = defaultdict(set)
         xung_dot[rong] = {"A", "B"}
         assert bf.id_ten_xung_dot(xung_dot) == {}, repr(rong)
+
+
+# ── 3. nguon verdict trung nhau thi KHONG duoc goi la "dong thuan" ───────────
+#
+# Che do agent: cache khoa theo noi dung nen cung mot cau tra loi duoc tai dung
+# cho ca hai luot "model". Do duoc o P4 (2026-09-18): hai file ai_verdicts_*.json
+# co md5 GIONG HET NHAU (2377541a5f2e), trong khi che do LLM thi khac nhau.
+# Script van in "fully agreed 100.0%" - nguoi doc tuong minh duoc hai y kien doc
+# lap bao ve, thuc te chi co mot. Chot chan so 4 cua skill rong ma khong ai biet.
+
+def test_phat_hien_duoc_hai_nguon_verdict_trung_nhau():
+    bf = _nap("build_final")
+    mot_y_kien = [("medium", {"a": {"verdict": "wrong"}}), ("high", {"a": {"verdict": "wrong"}})]
+    assert bf.nguon_trung_nhau(mot_y_kien) is True
+
+
+def test_hai_nguon_khac_nhau_thi_khong_bi_bao_trung():
+    bf = _nap("build_final")
+    hai_y_kien = [("medium", {"a": {"verdict": "wrong"}}), ("high", {"a": {"verdict": "correct"}})]
+    assert bf.nguon_trung_nhau(hai_y_kien) is False
+
+
+def test_mot_nguon_duy_nhat_khong_bi_coi_la_trung():
+    """Mot nguon la mot nguon - da co --accept-single-model lo viec do."""
+    bf = _nap("build_final")
+    assert bf.nguon_trung_nhau([("medium", {"a": {"verdict": "wrong"}})]) is False

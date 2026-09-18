@@ -32,6 +32,21 @@ def index_verdicts(queue: dict, verdicts: dict[str, dict]) -> dict[tuple[str, st
     return indexed
 
 
+def nguon_trung_nhau(indexes: list) -> bool:
+    """Hai nguon verdict tro len nhung NOI DUNG giong het nhau -> chi co MOT y kien.
+
+    Che do agent: `hoi_agent()` khoa cau hoi theo noi dung, nen luot "model thu hai"
+    dung lai dung cau tra loi cua luot dau. Do duoc o P4 (2026-09-18): hai file
+    ai_verdicts_*.json co md5 giong het nhau o che do agent, khac nhau o che do LLM.
+    Van in "fully agreed 100.0%" - nguoi doc tuong co hai y kien doc lap bao ve, thuc
+    te chot chan "hai model bat dong thi giu nguyen" rong hoan toan.
+    """
+    if len(indexes) < 2:
+        return False                      # mot nguon la mot nguon, da co --accept-single-model
+    dau = indexes[0][1]
+    return all(khac == dau for _ten, khac in indexes[1:])
+
+
 def id_ten_xung_dot(id_name_conflict: dict) -> dict:
     """Mot leaf_id ung voi nhieu ten la du lieu hong - TRU KHI id do rong.
     File khong co cot `leaf_id` thi moi dong deu co leaf_id None, nen moi danh muc
@@ -93,6 +108,14 @@ def main() -> None:
     for path in args.verdicts:
         indexes.append((path.stem.replace("ai_verdicts_", ""), index_verdicts(queue, json.loads(path.read_text(encoding="utf-8")))))
     print(f"verdict sources: {', '.join(name for name, _ in indexes)}")
+    if nguon_trung_nhau(indexes):
+        print(f"\n{'!' * 72}\n"
+              f"CANH BAO: {len(indexes)} nguon verdict co noi dung GIONG HET NHAU.\n"
+              "Day KHONG phai doi chieu hai y kien doc lap - chi co MOT y kien, dem hai lan.\n"
+              "Chot chan 'hai model bat dong thi giu nguyen' khong bao ve gi o lan chay nay.\n"
+              "Thuong gap o che do agent: cau tra loi duoc cache theo noi dung nen luot thu\n"
+              "hai dung lai y nguyen luot dau. Muon doi chieu that thi chay mot luot bang\n"
+              f"model khac (bo MECSU_CHE_DO=agent), roi dua ca hai file verdict vao.\n{'!' * 72}")
 
     resolutions: dict[int, dict] = {}
     if args.resolutions:
