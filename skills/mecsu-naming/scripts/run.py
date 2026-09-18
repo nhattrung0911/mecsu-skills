@@ -29,6 +29,20 @@ if hasattr(sys.stdout, 'reconfigure'):
 O_DAY = Path(__file__).resolve().parent
 
 
+def buoc_neu_can(ten: str, dau_ra: Path, dau_vao: list, *co, lam_lai: bool = False) -> None:
+    """Chay buoc, TRU KHI dau vao khong doi va dau ra con co noi dung.
+
+    Do duoc o P1 (2026-09-17): khong co cho nay thi di `--den-vong` 1 -> 2 -> 3 tra
+    tien vong 1 ba lan, buoc tim kiem chay lai 33 phut moi lan, va vong 3 tai + rut
+    lai tu dau lam 21 OK tut xuong 19 OK.
+    """
+    if not can_chay_lai(dau_ra, dau_vao, lam_lai):
+        print('\n=== %s ===\nbo qua: dau vao khong doi, da co %s' % (ten, dau_ra), flush=True)
+        return
+    buoc(ten, *co)
+    ghi_dau_nguon(dau_ra, dau_vao)
+
+
 def buoc(ten: str, *co) -> None:
     print('\n=== %s ===' % ten, flush=True)
     xong = subprocess.run([sys.executable, *co])
@@ -39,6 +53,66 @@ def buoc(ten: str, *co) -> None:
         raise SystemExit(4)
     if xong.returncode != 0:
         raise SystemExit('%s thoat %d - dung ca day.' % (ten, xong.returncode))
+
+
+def _van_tay(duong_dan: Path) -> str:
+    """Hash noi dung file, hoac hash danh sach ten+co cua file trong thu muc."""
+    import hashlib
+    bam = hashlib.sha256()
+    if duong_dan.is_dir():
+        for p in sorted(duong_dan.rglob('*')):
+            if p.is_file():
+                bam.update(p.name.encode('utf-8'))
+                bam.update(str(p.stat().st_size).encode('utf-8'))
+    elif duong_dan.exists():
+        bam.update(duong_dan.read_bytes())
+    else:
+        return ''
+    return bam.hexdigest()[:16]
+
+
+def _co_noi_dung(duong_dan: Path) -> bool:
+    """File rong hay thu muc rong deu la THAT BAI - dung tin ket qua rong da cache."""
+    if duong_dan.is_dir():
+        return any(p.is_file() for p in duong_dan.rglob('*'))
+    if not duong_dan.exists() or duong_dan.stat().st_size == 0:
+        return False
+    if duong_dan.suffix == '.json':
+        try:
+            return bool(json.loads(duong_dan.read_text(encoding='utf-8')))
+        except json.JSONDecodeError:
+            return False
+    return True
+
+
+def _dau_nguon(dau_ra: Path) -> Path:
+    """File an canh dau ra, khong lam ban thu muc ket qua cua nguoi dung."""
+    return dau_ra.parent / ('.nguon_%s.json' % dau_ra.name)
+
+
+def ghi_dau_nguon(dau_ra: Path, dau_vao: list) -> None:
+    _dau_nguon(dau_ra).write_text(json.dumps(
+        {str(p): _van_tay(Path(p)) for p in dau_vao}, ensure_ascii=False, indent=2),
+        encoding='utf-8')
+
+
+def can_chay_lai(dau_ra: Path, dau_vao: list, lam_lai: bool = False) -> bool:
+    """False = bo qua duoc buoc nay.
+
+    Bo qua chi khi DAU VAO khong doi (khoa theo noi dung, khong theo su ton tai cua
+    file) VA dau ra con co noi dung. Input doi ma dung ket qua cu la gan nham du lieu
+    - dung loi da xay ra hai lan trong repo nay.
+    """
+    if lam_lai:
+        return True
+    dau = _dau_nguon(dau_ra)
+    if not dau.exists() or not _co_noi_dung(dau_ra):
+        return True
+    try:
+        cu = json.loads(dau.read_text(encoding='utf-8'))
+    except json.JSONDecodeError:
+        return True
+    return cu != {str(p): _van_tay(Path(p)) for p in dau_vao}
 
 
 def phai_co_noi_dung(duong_dan: Path, ten: str):
@@ -71,6 +145,9 @@ def main() -> None:
     parser.add_argument('--code-col', type=int, help='Chi so cot ma, dem tu 0, neu do khong ra.')
     parser.add_argument('--hoc-lai', action='store_true',
                         help='Hoc lai quy uoc du convention.json da co.')
+    parser.add_argument('--lam-lai', action='store_true',
+                        help='Chay lai MOI buoc du dau vao khong doi. Mac dinh bo qua buoc '
+                             'da xong: nang --den-vong khong tra tien lai cho vong truoc.')
     args = parser.parse_args()
 
     if not args.input.exists():
@@ -115,9 +192,9 @@ def main() -> None:
     if not chot:
         print('\nKhong co quyet dinh rieng cho job nay -> dung chuan Mecsu co san trong skill.')
 
-    buoc('vong 1: ap quy uoc cho dong da co thong tin',
-         str(O_DAY / 'apply_convention.py'), '--codes', str(codes),
-         '--convention', str(quy_uoc), '--out', str(names))
+    buoc_neu_can('vong 1: ap quy uoc cho dong da co thong tin', names, [codes, quy_uoc],
+                 str(O_DAY / 'apply_convention.py'), '--codes', str(codes),
+                 '--convention', str(quy_uoc), '--out', str(names), lam_lai=args.lam_lai)
     ket_qua = phai_co_noi_dung(names, 'vong 1')
 
     can_soat = [r for r in ket_qua if r.get('trang_thai') == 'REVIEW']
@@ -144,20 +221,25 @@ def main() -> None:
         web_dir = args.job / 'web'
         facts = args.job / 'web_facts.json'
 
-        buoc('vong 2a: model nghi truy van tim kiem',
-             str(O_DAY / 'build_queries.py'), '--codes', str(codes), '--out', str(queries))
+        buoc_neu_can('vong 2a: model nghi truy van tim kiem', queries, [codes],
+                     str(O_DAY / 'build_queries.py'), '--codes', str(codes),
+                     '--out', str(queries), lam_lai=args.lam_lai)
         co_tim = [str(O_DAY / 'search_sources.py'), '--codes', str(codes),
                   '--queries', str(queries), '--out', str(search)]
         for domain in args.domain_cua_minh:
             co_tim += ['--domain-cua-minh', domain]
-        buoc('vong 2b: tim nguon tren internet', *co_tim)
+        buoc_neu_can('vong 2b: tim nguon tren internet', search, [codes, queries],
+                     *co_tim, lam_lai=args.lam_lai)
 
-        buoc('vong 2c: tai nguon ve dia',
-             str(O_DAY / 'fetch_sources.py'), '--sources', str(search),
-             '--out-dir', str(web_dir), '--limit', str(args.fetch_limit))
-        buoc('vong 2d: rut thong so va doi chieu nguoc',
-             str(O_DAY / 'extract_from_web.py'), '--sources-dir', str(web_dir),
-             '--search', str(search), '--convention', str(quy_uoc), '--out', str(facts))
+        buoc_neu_can('vong 2c: tai nguon ve dia', web_dir, [search],
+                     str(O_DAY / 'fetch_sources.py'), '--sources', str(search),
+                     '--out-dir', str(web_dir), '--limit', str(args.fetch_limit),
+                     lam_lai=args.lam_lai)
+        buoc_neu_can('vong 2d: rut thong so va doi chieu nguoc', facts,
+                     [web_dir, search, quy_uoc],
+                     str(O_DAY / 'extract_from_web.py'), '--sources-dir', str(web_dir),
+                     '--search', str(search), '--convention', str(quy_uoc),
+                     '--out', str(facts), lam_lai=args.lam_lai)
         phai_co_noi_dung(facts, 'vong 2d')
 
     if args.den_vong >= 3:
