@@ -158,3 +158,73 @@ def test_xoa_nhieu_hon_so_dong_thi_thoat_khac_0(tmp_path):
     nguon = _file_co_filter(tmp_path)
     ket_qua = _chay_holdout(nguon, tmp_path / "mau.xlsx", 10, "mapped_filters", 99)
     assert ket_qua.returncode != 0
+
+
+# ── Lay mau THEO NHOM ────────────────────────────────────────────────────────
+#
+# Boc ngau nhien 100 dong tu 5.730 lam vun het nhom: do duoc 39/43 nhom chi con
+# 1-4 dong, 66/100 dong khong vao duoc cum nao (can toi thieu 5 lang gieng).
+# Skill hoc quy uoc TU LANG GIENG trong chinh file, nen mau vun lam no mu - va
+# con so do duoc la do MAU, khong phai do SKILL.
+
+def _chay_nhom(nguon: Path, ra: Path, rows: int, cot_nhom: str, seed: int = 0):
+    return subprocess.run(
+        [sys.executable, str(CONG_CU), "--input", str(nguon), "--rows", str(rows),
+         "--seed", str(seed), "--out", str(ra), "--theo-nhom", cot_nhom],
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+
+
+def _file_co_nhom(thu_muc: Path) -> Path:
+    """6 nhom, moi nhom 10 dong."""
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["part_id", "part_number", "leaf_category_name"])
+    for g in range(6):
+        for i in range(10):
+            ws.append([g * 10 + i, "MA%d%02d" % (g, i), "Nhom %d" % g])
+    duong_dan = thu_muc / "co_nhom.xlsx"
+    wb.save(duong_dan)
+    return duong_dan
+
+
+def _dem_nhom(duong_dan: Path) -> dict:
+    ws = openpyxl.load_workbook(duong_dan, read_only=True).worksheets[0]
+    hang = list(ws.iter_rows(values_only=True))
+    cot = [str(v) for v in hang[0]].index("leaf_category_name")
+    dem = {}
+    for h in hang[1:]:
+        dem[h[cot]] = dem.get(h[cot], 0) + 1
+    return dem
+
+
+def test_lay_tron_nhom_khong_cat_le_dong(tmp_path):
+    """Nhom nao duoc chon thi phai lay DU 10 dong cua no, khong lay 3 dong roi bo."""
+    nguon = _file_co_nhom(tmp_path)
+    ra = tmp_path / "mau.xlsx"
+    assert _chay_nhom(nguon, ra, 30, "leaf_category_name").returncode == 0
+    dem = _dem_nhom(ra)
+    assert all(n == 10 for n in dem.values()), dem
+    assert sum(dem.values()) == 30
+
+
+def test_khong_du_so_dong_chinh_xac_thi_lay_qua_hoac_du_nhom_gan_nhat(tmp_path):
+    """25 dong khong chia het cho nhom 10 - phai lay tron nhom, khong cat."""
+    nguon = _file_co_nhom(tmp_path)
+    ra = tmp_path / "mau.xlsx"
+    assert _chay_nhom(nguon, ra, 25, "leaf_category_name").returncode == 0
+    dem = _dem_nhom(ra)
+    assert all(n == 10 for n in dem.values()), dem
+    assert sum(dem.values()) in (20, 30)
+
+
+def test_theo_nhom_lap_lai_duoc(tmp_path):
+    nguon = _file_co_nhom(tmp_path)
+    a, b = tmp_path / "a.xlsx", tmp_path / "b.xlsx"
+    _chay_nhom(nguon, a, 30, "leaf_category_name", seed=5)
+    _chay_nhom(nguon, b, 30, "leaf_category_name", seed=5)
+    assert _van_tay(a) == _van_tay(b)
+
+
+def test_cot_nhom_khong_ton_tai_thi_thoat_khac_0(tmp_path):
+    nguon = _file_co_nhom(tmp_path)
+    assert _chay_nhom(nguon, tmp_path / "mau.xlsx", 30, "khong_co").returncode != 0

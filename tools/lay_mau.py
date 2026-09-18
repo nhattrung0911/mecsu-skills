@@ -34,6 +34,9 @@ def main() -> None:
     parser.add_argument('--xoa-cot', default='',
                         help='Ten cot de XOA TRANG mot so o (hold-out). Dap an ghi ra file ben canh.')
     parser.add_argument('--xoa-so-o', type=int, default=0, help='Xoa trang bao nhieu o.')
+    parser.add_argument('--theo-nhom', default='',
+                        help='Ten cot nhom. Lay TRON tung nhom cho toi khi du --rows, '
+                             'thay vi boc le dong. Giu lang gieng de skill hoc duoc quy uoc.')
     args = parser.parse_args()
 
     if not args.input.exists():
@@ -51,7 +54,30 @@ def main() -> None:
     if not du_lieu:
         raise SystemExit('%s chi co header, khong co dong du lieu' % args.input)
 
-    if args.rows >= len(du_lieu):
+    if args.theo_nhom:
+        # Boc le dong lam vun nhom: do duoc 39/43 nhom chi con 1-4 dong va 66/100 dong
+        # khong vao duoc cum nao (cum can toi thieu 5 lang gieng). Skill hoc quy uoc TU
+        # LANG GIENG trong chinh file, nen mau vun do chinh cai mau chu khong do skill.
+        ten_cot = [str(v) if v is not None else '' for v in header]
+        if args.theo_nhom not in ten_cot:
+            raise SystemExit('khong co cot nhom %r. Cot that: %s' % (args.theo_nhom, ten_cot))
+        cot_nhom = ten_cot.index(args.theo_nhom)
+        theo_nhom: dict = {}
+        for j, hang_du in enumerate(du_lieu):
+            theo_nhom.setdefault(str(hang_du[cot_nhom]), []).append(j)
+        ten_nhom = sorted(theo_nhom)
+        random.Random(args.seed).shuffle(ten_nhom)
+        chon, da_lay = [], []
+        for ten in ten_nhom:
+            if len(chon) >= args.rows:
+                break
+            chon.extend(theo_nhom[ten])             # lay TRON nhom, khong cat le
+            da_lay.append(ten)
+        chon.sort()
+        print('nhom da lay %d/%d nhom: %s%s'
+              % (len(da_lay), len(ten_nhom), ', '.join(da_lay[:6]),
+                 ' ...' if len(da_lay) > 6 else ''))
+    elif args.rows >= len(du_lieu):
         chon = list(range(len(du_lieu)))            # xin nhieu hon co that -> lay het
     else:
         chon = sorted(random.Random(args.seed).sample(range(len(du_lieu)), args.rows))

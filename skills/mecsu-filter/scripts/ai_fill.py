@@ -312,7 +312,17 @@ def main():
     if args.limit:
         asks = asks[:args.limit]
     if not asks:
-        raise SystemExit('Hang doi rong sau khi loc.')
+        # Hang doi rong la KET QUA HOP LE: file da du filter, khong co gi phai hoi.
+        # Truoc day thoat khac 0 o day, `run.py` coi la hong va dung ca day -> file
+        # da sach thi KHONG dung ra duoc file giao, ma file sach chinh la loai file
+        # nguoi ta dem QC. Luat so 4 la "hong thi exit != 0", khong phai "khong co
+        # viec thi exit != 0". Van phai ghi mot ai_values rong, vi buoc sau tim file do.
+        slug = re.sub(r'[^a-z0-9]+', '-', (args.model or load_config()['models'][0]).lower())
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        (args.output_dir / ('ai_values_%s.json' % slug.strip('-'))).write_text(
+            '{}', encoding='utf-8')
+        print('Khong co o nao can hoi model - file da du filter. Di tiep de dung file giao.')
+        return
 
     vocab = build_vocab(args.audit)
     standards = load_standards(args.standards)
