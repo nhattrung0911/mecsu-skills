@@ -25,6 +25,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import skill_env                                              # noqa: E402
+# Dung CHUNG phep kiem ma voi vong 1. Hai vong cham khac nhau chinh la nguon goc
+# cua lo "ten de lot tien to noi bo van duoc OK".
+from apply_convention import ma_dung_trong_ten                # noqa: E402
+# `search.json` khong mang `ma_hang`, va tu tach tien to o day thi thanh nguon su
+# that thu hai. Dung dung ham cua buoc doc file.
+from extract_codes import tach as tach_ma                     # noqa: E402
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -166,6 +172,7 @@ def main() -> None:
             continue
         text = doc_cache(duong_dan)
         muc_tieu.append({'ma': ma, 'url': muc['url'], 'text': text,
+                         'ma_hang': tach_ma(ma).get('ma_hang', ''),
                          'ten_file': tim.get(ma, {}).get('ten_file', '')})
 
     so_lo = (len(muc_tieu) + args.batch - 1) // args.batch
@@ -213,7 +220,12 @@ def main() -> None:
                 bac_bo[nhan] = gia_tri
 
         ten = r.get('ten_de_xuat', '')
-        ma_dung = bool(m['ma']) and m['ma'] in ten
+        # `m['ma'] in ten` doi MA THO, ke ca tien to noi bo - nguoc luat so 3 cua
+        # chinh skill. Do o P2 (2026-09-18) tren cung mot cache: che do LLM co 20/20
+        # ten chua `BSI-BS236848` va duoc 19 OK; che do agent dung `BS236848` dung
+        # luat lai chi duoc 2 OK. Phep kiem thuong cho viec pha luat. Vong 1 da kiem
+        # dung tu dau, nen dung CHUNG ham cua no.
+        ma_dung = ma_dung_trong_ten(m['ma'], ten, m.get('ma_hang', ''))
         if bac_bo or not ma_dung or not thong_so:
             trang_thai = 'REVIEW'
         else:
