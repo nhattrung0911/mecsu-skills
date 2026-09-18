@@ -68,6 +68,15 @@ python ${CLAUDE_SKILL_DIR}/scripts/run.py --input <file.xlsx> --job jobs/naming-
 Dò không ra cột mã thì dừng và in header thật kèm `--code-col` (đếm từ 0). Muốn học lại quy ước
 thì thêm `--hoc-lai`. Kết quả ra `<job>/ket_qua.xlsx`, đổi chỗ bằng `--out`.
 
+**Nâng `--den-vong` không tính tiền lại.** Bước nào mà đầu vào không đổi và đầu ra còn nội dung
+thì bỏ qua, in `bo qua: dau vao khong doi`. Khoá theo **nội dung** đầu vào: sửa `convention.json`
+là vòng 1 chạy lại ngay. File hoặc thư mục rỗng tính là chưa có kết quả, nên một thất bại đã cache
+không bao giờ được dùng. `--lam-lai` ép chạy lại tất cả.
+
+> Trước khi có chỗ này (đo 2026-09-17, 100 mã): đi vòng 1 → 2 → 3 trả tiền vòng 1 **ba lần**, bước
+> tìm kiếm chạy lại **33 phút mỗi lượt**, và vòng 3 tải lại từ đầu làm **21 OK tụt còn 19** — chạy
+> thêm để tốt hơn lại tệ hơn.
+
 Chạy lẻ từng bước để soi một bước cụ thể khi tìm lỗi: [`references/chay_le_tung_buoc.md`](references/chay_le_tung_buoc.md).
 
 Thêm `--dry-run` vào các bước gọi model để xem **số lần gọi dự kiến** trước khi tiêu tiền.

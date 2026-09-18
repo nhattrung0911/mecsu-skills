@@ -290,6 +290,13 @@ công giả đã đo được:
 
 Thêm `--dry-run` vào bước gọi model để xem **số lần gọi dự kiến** trước khi tiêu tiền.
 
+**Nâng `--den-vong` không tính tiền lại.** Bước nào đầu vào không đổi thì bỏ qua, in
+`bo qua: dau vao khong doi`. Sửa `convention.json` là vòng 1 chạy lại ngay — nó khoá theo nội
+dung, không theo việc file có tồn tại hay không. `--lam-lai` ép chạy lại tất cả.
+
+Đo 2026-09-17 trên 100 mã, trước khi có chỗ này: đi vòng 1 → 2 → 3 trả tiền vòng 1 ba lần, bước
+tìm kiếm chạy lại 33 phút mỗi lượt, và vòng 3 tải lại từ đầu làm 21 dòng `OK` tụt còn 19.
+
 ### Bước 4 — Đọc ba mức trong file kết quả
 
 Kết quả ra `jobs/naming-01/ket_qua.xlsx` (đổi chỗ bằng `--out`). Năm cột mới nối sau cột gốc, **file
@@ -322,6 +329,7 @@ sơn — một trang tải được nhưng không có thông số nào, một tr
 | Excel mở ra thấy tiếng Việt bị vỡ | console Windows là cp1252 | không ảnh hưởng file, chỉ là hiển thị ở terminal |
 | `Khong do duoc cot ma` + header thật | `naming` không đoán ra cột mã hãng | chỉ rõ `--code-col` (đánh số từ 0), đừng để nó đoán bừa |
 | `naming` trả về nhiều dòng `REVIEW` | mã đó web không có thông số công khai | đó **không phải lỗi** — đọc cột `Ghi chú`, tra catalog giấy hoặc hỏi nhà cung cấp |
+| Thoát **4** kèm `CAN AGENT TRA LOI` | chạy ở chế độ agent, script đang chờ agent trả lời | agent điền `<job>/hoi_agent/tra_loi.json` rồi **chạy lại đúng lệnh cũ** — không phải lỗi |
 
 **Thoát khác 0 nghĩa là KHÔNG giao.** Không phải "chạy lại kèm cờ khác cho nó qua".
 

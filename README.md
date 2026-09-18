@@ -39,7 +39,16 @@ flowchart LR
     style F fill:#e8f0fe,stroke:#4285f4
 ```
 
-🟢 **0 token** · 🔴 tốn tiền · rule lọc sạch **63.7%** dòng, phần còn lại gộp trùng **9×** trước khi gọi model
+🟢 **0 token** · 🔴 tốn tiền · gộp trùng trước khi gọi model, và mọi giá trị model trả về đều bị
+đối chiếu lại với chính nguồn — không khớp thì thành `REVIEW`, không đi vào file giao như thật.
+
+Đo trên 100 dòng thật, 2026-09-18 — mỗi số dưới đây sinh lại được bằng một lệnh trong `tools/`:
+
+| Skill | Số đo | Sinh lại bằng |
+|---|---|---|
+| `/mecsu-category` | bắt **15/15** dòng gán sai, **0** báo động giả trên 87 dòng còn nguyên | `tools/cham_cate.py` |
+| `/mecsu-filter` | điền đúng **41,8%** trong 134 cặp bị xoá trắng | `tools/cham_holdout.py` |
+| `/mecsu-naming` | tên để lọt tiền tố nội bộ bị hạ `REVIEW`, không giao thẳng | [test canh luật này](skills/mecsu-naming/tests/test_naming_vong2d_tien_to.py) |
 
 ## Cài
 
