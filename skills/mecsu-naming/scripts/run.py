@@ -115,6 +115,28 @@ def can_chay_lai(dau_ra: Path, dau_vao: list, lam_lai: bool = False) -> bool:
     return cu != {str(p): _van_tay(Path(p)) for p in dau_vao}
 
 
+def xu_ly_ma_vong_3(ma: int) -> bool:
+    """True = co ket qua, ghi dau nguon duoc.
+
+    Ba nghia khac nhau, tung bi gop lam mot:
+      0 = xong, co ket qua
+      1 = KHONG ma nao can vong 3 - co y do, day chuyen di tiep
+      4 = dang CHO AGENT tra loi - phai truyen nguyen ra ngoai
+
+    Do duoc o P2 (2026-09-18): phep kiem cu `not in (0, 1)` coi 4 la hong va bien
+    thanh SystemExit(chuoi) -> Python thoat 1. Script in "vong 3 thoat 4" trong khi
+    tien trinh tra ve 1, nen agent khong biet no phai dien tra_loi.json.
+    """
+    if ma == 4:
+        print('vong 3 dang cho agent tra loi. Dien xong chay lai dung lenh nay.')
+        raise SystemExit(4)
+    if ma == 1:
+        return False
+    if ma != 0:
+        raise SystemExit('vong 3 thoat %d - dung ca day.' % ma)
+    return True
+
+
 def phai_co_noi_dung(duong_dan: Path, ten: str):
     """Kiem NOI DUNG, khong kiem su ton tai: file rong cung la that bai."""
     if not duong_dan.exists():
@@ -254,11 +276,7 @@ def main() -> None:
             print('\n=== vong 3: ma kho, tim catalog ===', flush=True)
             xong3 = subprocess.run([sys.executable, str(O_DAY / 'round3.py'),
                                     '--job', str(args.job), '--out', str(vong3)])
-            if xong3.returncode not in (0, 1):
-                raise SystemExit('vong 3 thoat %d - dung ca day.' % xong3.returncode)
-            # exit 1 = khong ma nao can vong 3, co y do. Chi ghi dau nguon khi that su
-            # co ket qua, de lan sau con thu lai neu vong 2 sinh them viec.
-            if xong3.returncode == 0:
+            if xu_ly_ma_vong_3(xong3.returncode):
                 ghi_dau_nguon(vong3, vao3)
 
     buoc('dung file Excel de giao', str(O_DAY / 'build_sheet.py'),

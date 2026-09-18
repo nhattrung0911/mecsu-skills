@@ -128,3 +128,40 @@ def test_co_lam_lai_ton_tai_trong_argparse():
     """Khong co duong ep chay lai thi nguoi dung bi ket voi ket qua cu."""
     text = (SCRIPTS / "run.py").read_text(encoding="utf-8")
     assert "--lam-lai" in text
+
+
+# ── Vong 3: ma thoat 4 phai di ra ngoai ──────────────────────────────────────
+#
+# `round3.py` thoat 1 khi KHONG co ma nao can vong 3 - co y do, khong phai loi.
+# Nhung khi no thoat 4 (xin agent tra loi) thi phep kiem `not in (0, 1)` coi la
+# hong va bien thanh SystemExit(chuoi) -> Python thoat 1. Do duoc o P2 lan 2
+# (2026-09-18): script tu in "vong 3 thoat 4" trong khi tien trinh tra ve 1.
+# Lo do CHINH TAY nguoi vá gay ra khi boc vong 3 bang resume: giu nguyen phep
+# kiem cu ma khong tinh den ma 4 vua them.
+
+def test_vong_3_thoat_4_thi_truyen_nguyen_ra_ngoai():
+    import pytest
+    run = _nap()
+    with pytest.raises(SystemExit) as loi:
+        run.xu_ly_ma_vong_3(4)
+    assert loi.value.code == 4
+
+
+def test_vong_3_thoat_1_la_khong_co_viec_khong_phai_hong():
+    """round3.py thoat 1 khi khong ma nao can vong 3 - day chuyen phai di tiep."""
+    run = _nap()
+    assert run.xu_ly_ma_vong_3(1) is False      # False = khong ghi dau nguon
+
+
+def test_vong_3_thoat_0_thi_di_tiep_va_ghi_dau_nguon():
+    run = _nap()
+    assert run.xu_ly_ma_vong_3(0) is True
+
+
+def test_vong_3_ma_khac_thi_dung_ca_day():
+    import pytest
+    run = _nap()
+    with pytest.raises(SystemExit) as loi:
+        run.xu_ly_ma_vong_3(2)
+    assert loi.value.code != 0
+    assert loi.value.code != 4
