@@ -32,6 +32,18 @@ def index_verdicts(queue: dict, verdicts: dict[str, dict]) -> dict[tuple[str, st
     return indexed
 
 
+def id_ten_xung_dot(id_name_conflict: dict) -> dict:
+    """Mot leaf_id ung voi nhieu ten la du lieu hong - TRU KHI id do rong.
+    File khong co cot `leaf_id` thi moi dong deu co leaf_id None, nen moi danh muc
+    that trong file dung chung id rong do -> tu bao xung dot. Do duoc o P4 tren 102
+    dong that: bat dung 15/15 dong bi gan sai, 0 bao dong gia, nhung pipeline TU CHOI
+    GIAO vi cai nay. SKILL.md hua "layout cot nao cung chay"; cot leaf_id la tuy chon.
+    """
+    RONG = {'', 'none', 'nan', 'null'}
+    return {i: n for i, n in id_name_conflict.items()
+            if len(n) > 1 and str(i).strip().lower() not in RONG}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
@@ -207,7 +219,7 @@ def main() -> None:
         problems.append(f"{bad_leaf} row(s) carry a leaf_category_id not in the catalog")
     if bad_depth:
         problems.append(f"{bad_depth} row(s) carry an id/name/depth triple the source never uses")
-    split_ids = {i: n for i, n in id_name_conflict.items() if len(n) > 1}
+    split_ids = id_ten_xung_dot(id_name_conflict)
     if split_ids:
         problems.append(f"{len(split_ids)} leaf_category_id map to several names: {list(split_ids)[:3]}")
 

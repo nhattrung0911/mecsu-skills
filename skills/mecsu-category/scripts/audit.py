@@ -53,6 +53,20 @@ def run(script: str, *arguments: str, env: dict | None = None) -> int:
     return subprocess.call(command, env=env)
 
 
+def dung_neu_loi(ma: int, script: str, thong_diep: str = "") -> None:
+    """Truyen nguyen ma thoat 4 ra ngoai; moi ma khac 0 con lai la hong.
+
+    4 = buoc con dang CHO AGENT tra loi, khac han hong. `SystemExit('<chuoi>')`
+    lam Python thoat 1, nen 4 bien thanh 1 va agent goi skill khong biet no phai
+    dien tra_loi.json hay day chuyen da hong. Da do o P4 tren 102 dong that.
+    """
+    if ma == 4:
+        print(f"\n{script} dang cho agent tra loi. Dien xong chay lai dung lenh nay.")
+        raise SystemExit(4)
+    if ma:
+        raise SystemExit(thong_diep or f"\n{script} that bai (exit {ma}). Dung lai.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--input", type=Path, required=True, help="Workbook to audit.")
@@ -88,8 +102,8 @@ def main() -> None:
     models = args.models or []
     first = ["--model", models[0]] if models else []
     if args.calibrate:
-        if run("ai_check.py", "--limit", str(args.calibrate), *first, env=env):
-            raise SystemExit("\nCalibration failed. Check .env and the endpoint.")
+        dung_neu_loi(run("ai_check.py", "--limit", str(args.calibrate), *first, env=env),
+                     "ai_check.py", "\nCalibration failed. Check .env and the endpoint.")
         if not args.yes:
             print(
                 f"\n{'=' * 72}\nSTOP. Read the {args.calibrate}-pair sample above before paying for the rest.\n"
@@ -99,11 +113,10 @@ def main() -> None:
             return
 
     # 4. full pass, then a second model -------------------------------------
-    if run("ai_check.py", *first, env=env):
-        raise SystemExit("\nMain pass failed.")
+    dung_neu_loi(run("ai_check.py", *first, env=env), "ai_check.py", "\nMain pass failed.")
     if len(models) > 1:
-        if run("ai_check.py", "--model", models[1], env=env):
-            raise SystemExit("\nCross-check pass failed.")
+        dung_neu_loi(run("ai_check.py", "--model", models[1], env=env),
+                     "ai_check.py", "\nCross-check pass failed.")
 
     jobs_dir = verdicts_dir()
     verdict_files = sorted(
