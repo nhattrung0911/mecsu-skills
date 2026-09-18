@@ -28,6 +28,12 @@ def run(script: str, *arguments: str) -> None:
     printable = ' '.join(str(a) for a in arguments)
     print('\n$ python %s %s\n%s' % (script, printable, '-' * 72))
     code = subprocess.call([sys.executable, str(HERE / script), *[str(a) for a in arguments]])
+    # 4 = dang CHO AGENT tra loi, khac han hong. Phai truyen nguyen so ra ngoai:
+    # `SystemExit('<chuoi>')` lam Python thoat 1 va 4 bien thanh 1, agent goi skill
+    # nay khong biet no phai dien tra_loi.json hay day chuyen da hong.
+    if code == 4:
+        print('\n%s dang cho agent tra loi. Dien xong chay lai dung lenh nay.' % script)
+        raise SystemExit(4)
     if code:
         raise SystemExit('\n%s that bai (exit %d). Dung lai, khong chay buoc sau.' % (script, code))
 
