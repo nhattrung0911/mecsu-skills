@@ -228,3 +228,81 @@ def test_theo_nhom_lap_lai_duoc(tmp_path):
 def test_cot_nhom_khong_ton_tai_thi_thoat_khac_0(tmp_path):
     nguon = _file_co_nhom(tmp_path)
     assert _chay_nhom(nguon, tmp_path / "mau.xlsx", 30, "khong_co").returncode != 0
+
+
+# ── Gan SAI co chu dich: do xem skill co BAT dung nhung dong do ──────────────
+#
+# mecsu-category SOAT danh muc da gan, khong dien o trong. Nen hold-out o day la
+# doi danh muc cua N dong sang mot danh muc khac CO THAT trong file, roi do xem
+# skill bat dung N dong do khong (va khong bao dong gia o cac dong con lai).
+
+def _chay_doi(nguon: Path, ra: Path, rows: int, cot: str, so_o: int, seed: int = 0):
+    return subprocess.run(
+        [sys.executable, str(CONG_CU), "--input", str(nguon), "--rows", str(rows),
+         "--seed", str(seed), "--out", str(ra), "--doi-cot", cot, "--doi-so-o", str(so_o)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
+
+
+def _file_co_cate(thu_muc: Path) -> Path:
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["part_id", "part_number", "leaf_category_name"])
+    for i in range(30):
+        ws.append([i, "MA%03d" % i, "Danh muc %d" % (i % 5)])
+    duong_dan = thu_muc / "co_cate.xlsx"
+    wb.save(duong_dan)
+    return duong_dan
+
+
+def _doc(duong_dan: Path, cot: str):
+    ws = openpyxl.load_workbook(duong_dan, read_only=True).worksheets[0]
+    hang = list(ws.iter_rows(values_only=True))
+    i_c = [str(v) for v in hang[0]].index(cot)
+    i_ma = [str(v) for v in hang[0]].index("part_number")
+    return {str(h[i_ma]): h[i_c] for h in hang[1:]}
+
+
+def test_doi_dung_so_o_va_gia_tri_moi_phai_KHAC_gia_tri_cu(tmp_path):
+    import json
+    nguon = _file_co_cate(tmp_path)
+    ra = tmp_path / "mau.xlsx"
+    assert _chay_doi(nguon, ra, 30, "leaf_category_name", 8).returncode == 0
+    goc = _doc(nguon, "leaf_category_name")
+    moi = _doc(ra, "leaf_category_name")
+    doi = [ma for ma in moi if moi[ma] != goc[ma]]
+    assert len(doi) == 8, doi
+    dap_an = json.loads((tmp_path / "mau.dap_an.json").read_text(encoding="utf-8"))
+    assert len(dap_an["da_doi"]) == 8
+    for ma, muc in dap_an["da_doi"].items():
+        assert muc["goc"] != muc["gan_sai"]
+        assert moi[ma] == muc["gan_sai"]
+
+
+def test_gia_tri_gan_sai_phai_CO_THAT_trong_cot_do(tmp_path):
+    """Gan mot danh muc khong ton tai thi qua de bat - khong do duoc gi."""
+    import json
+    nguon = _file_co_cate(tmp_path)
+    ra = tmp_path / "mau.xlsx"
+    _chay_doi(nguon, ra, 30, "leaf_category_name", 8)
+    co_that = set(_doc(nguon, "leaf_category_name").values())
+    dap_an = json.loads((tmp_path / "mau.dap_an.json").read_text(encoding="utf-8"))
+    for muc in dap_an["da_doi"].values():
+        assert muc["gan_sai"] in co_that
+
+
+def test_doi_lap_lai_duoc(tmp_path):
+    nguon = _file_co_cate(tmp_path)
+    a, b = tmp_path / "a.xlsx", tmp_path / "b.xlsx"
+    _chay_doi(nguon, a, 30, "leaf_category_name", 8, seed=9)
+    _chay_doi(nguon, b, 30, "leaf_category_name", 8, seed=9)
+    assert _van_tay(a) == _van_tay(b)
+
+
+def test_doi_cot_khong_ton_tai_thi_thoat_khac_0(tmp_path):
+    nguon = _file_co_cate(tmp_path)
+    assert _chay_doi(nguon, tmp_path / "m.xlsx", 30, "khong_co", 3).returncode != 0
+
+
+def test_doi_nhieu_hon_so_dong_thi_thoat_khac_0(tmp_path):
+    nguon = _file_co_cate(tmp_path)
+    assert _chay_doi(nguon, tmp_path / "m.xlsx", 10, "leaf_category_name", 99).returncode != 0

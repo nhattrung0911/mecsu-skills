@@ -34,6 +34,10 @@ def main() -> None:
     parser.add_argument('--xoa-cot', default='',
                         help='Ten cot de XOA TRANG mot so o (hold-out). Dap an ghi ra file ben canh.')
     parser.add_argument('--xoa-so-o', type=int, default=0, help='Xoa trang bao nhieu o.')
+    parser.add_argument('--doi-cot', default='',
+                        help='Ten cot de GAN SAI CO CHU DICH mot so o: doi sang mot gia tri '
+                             'khac CO THAT trong cung cot. Dap an ghi ra file ben canh.')
+    parser.add_argument('--doi-so-o', type=int, default=0, help='Gan sai bao nhieu o.')
     parser.add_argument('--theo-nhom', default='',
                         help='Ten cot nhom. Lay TRON tung nhom cho toi khi du --rows, '
                              'thay vi boc le dong. Giu lang gieng de skill hoc duoc quy uoc.')
@@ -104,6 +108,33 @@ def main() -> None:
             dap_an[str(lay[j][cot_khoa])] = lay[j][cot]
             lay[j][cot] = None
 
+    # Gan SAI co chu dich: doi sang mot gia tri KHAC nhung CO THAT trong cung cot.
+    # Gan mot gia tri khong ton tai thi qua de bat, khong do duoc nang luc that.
+    da_doi: dict = {}
+    if args.doi_cot:
+        ten_cot = [str(v) if v is not None else '' for v in header]
+        if args.doi_cot not in ten_cot:
+            raise SystemExit('khong co cot %r. Cot that: %s' % (args.doi_cot, ten_cot))
+        cot = ten_cot.index(args.doi_cot)
+        if args.doi_so_o < 1:
+            raise SystemExit('--doi-cot phai di kem --doi-so-o >= 1')
+        co_gia_tri = [j for j, h in enumerate(lay) if str(h[cot] or '').strip()]
+        if args.doi_so_o > len(co_gia_tri):
+            raise SystemExit('xin doi %d o nhung chi co %d o co gia tri'
+                             % (args.doi_so_o, len(co_gia_tri)))
+        gia_tri_co_that = sorted({str(h[cot]).strip() for h in lay if str(h[cot] or '').strip()})
+        if len(gia_tri_co_that) < 2:
+            raise SystemExit('cot %r chi co mot gia tri - khong the gan sai'
+                             % args.doi_cot)
+        cot_khoa = ten_cot.index('part_number') if 'part_number' in ten_cot else 0
+        may = random.Random(args.seed + 2)
+        for j in sorted(may.sample(co_gia_tri, args.doi_so_o)):
+            cu = str(lay[j][cot]).strip()
+            khac = [v for v in gia_tri_co_that if v != cu]
+            moi = may.choice(khac)
+            da_doi[str(lay[j][cot_khoa])] = {'goc': cu, 'gan_sai': moi}
+            lay[j][cot] = moi
+
     ra = openpyxl.Workbook()
     dich = ra.active
     dich.title = ws.title[:31]
@@ -113,14 +144,23 @@ def main() -> None:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     ra.save(args.out)
 
-    if dap_an:
+    if dap_an or da_doi:
         import json
         ben_canh = args.out.parent / (args.out.stem + '.dap_an.json')
-        ben_canh.write_text(json.dumps(
-            {'nguon': str(args.input), 'seed': args.seed, 'cot': args.xoa_cot,
-             'khoa_la_cot': ten_cot[cot_khoa], 'da_xoa': dap_an},
-            ensure_ascii=False, indent=2), encoding='utf-8')
-        print('da xoa    %d o cot %r -> dap an o %s' % (len(dap_an), args.xoa_cot, ben_canh))
+        noi_dung = {'nguon': str(args.input), 'seed': args.seed,
+                    'khoa_la_cot': ten_cot[cot_khoa]}
+        if dap_an:
+            noi_dung['cot'] = args.xoa_cot
+            noi_dung['da_xoa'] = dap_an
+        if da_doi:
+            noi_dung['cot_doi'] = args.doi_cot
+            noi_dung['da_doi'] = da_doi
+        ben_canh.write_text(json.dumps(noi_dung, ensure_ascii=False, indent=2), encoding='utf-8')
+        if dap_an:
+            print('da xoa    %d o cot %r' % (len(dap_an), args.xoa_cot))
+        if da_doi:
+            print('da gan sai %d o cot %r' % (len(da_doi), args.doi_cot))
+        print('dap an    %s' % ben_canh)
 
     print('nguon      %s  (%d dong du lieu)' % (args.input, len(du_lieu)))
     print('seed       %d' % args.seed)
