@@ -17,7 +17,7 @@ LINT = ROOT / 'tools' / 'lint_skills.py'
 
 SKILL_MD = '''---
 name: {ten}
-description: Soat thu gi do. Use when can soat thu do.
+description: Use when can soat thu do. Soat thu gi do.
 ---
 
 # {ten}
@@ -122,3 +122,60 @@ def test_dir_lab_soi_duoc_ban_nhap(tmp_path):
         [sys.executable, str(LINT), '--root', str(tmp_path), '--dir', 'lab'],
         capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=120)
     assert ket_qua.returncode == 0, ket_qua.stdout + ket_qua.stderr
+
+
+def _nap_lint():
+    """File nay goi lint bang subprocess; may ca duoi can goi ham truc tiep."""
+    import importlib.util
+    duong_dan = Path(__file__).resolve().parents[1] / "tools" / "lint_skills.py"
+    spec = importlib.util.spec_from_file_location("lint_skills_truc_tiep", duong_dan)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["lint_skills_truc_tiep"] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+# ── description phai LIET KE TINH HUONG KICH HOAT ────────────────────────────
+#
+# CLAUDE.md: "description ... liet ke tinh huong kich hoat (ke ca tu khoa tieng
+# Viet nguoi dung thuc su go), KHONG tom tat quy trinh - description tom tat quy
+# trinh khien agent lam theo no va bo qua than skill."
+#
+# Do duoc 2026-09-18: mecsu-category 460 ky tu, mecsu-filter 425, ca hai MO DAU
+# bang tom tat quy trinh va khong co mot tu khoa tieng Viet nao - nguoi dung go
+# tieng Viet. Lint chan o 500 nen ca hai di qua cong ma khong ai biet.
+
+def test_description_phai_co_moc_tinh_huong_kich_hoat(tmp_path):
+    """Thieu 'Use when' / 'Dung khi' = khong liet ke tinh huong nao."""
+    ls = _nap_lint()
+    skill = tmp_path / "skills" / "mecsu-thu"
+    (skill / "scripts").mkdir(parents=True)
+    (skill / "SKILL.md").write_text(
+        "---\nname: mecsu-thu\ndescription: Soat du lieu san pham va dung file giao.\n---\n\n"
+        "# mecsu-thu\n\n## Khi nao dung\n\n- Khi can soat.\n", encoding="utf-8")
+    loi = []
+    ls.check(skill, lambda ten, thong_diep: loi.append(thong_diep))
+    assert any("tinh huong kich hoat" in x for x in loi), loi
+
+
+def test_description_co_moc_thi_khong_bao_loi(tmp_path):
+    ls = _nap_lint()
+    skill = tmp_path / "skills" / "mecsu-thu"
+    (skill / "scripts").mkdir(parents=True)
+    (skill / "SKILL.md").write_text(
+        "---\nname: mecsu-thu\ndescription: Use when an Excel file of products needs checking - "
+        "soat du lieu san pham, kiem file Excel.\n---\n\n# mecsu-thu\n\n## Khi nao dung\n\n- x\n",
+        encoding="utf-8")
+    loi = []
+    ls.check(skill, lambda ten, thong_diep: loi.append(thong_diep))
+    assert not any("tinh huong kich hoat" in x for x in loi), loi
+
+
+def test_ba_skill_dang_co_deu_co_moc_kich_hoat():
+    """Cay lam viec that - day la thu cong CI se chay."""
+    ls = _nap_lint()
+    from pathlib import Path
+    for p in sorted(Path(__file__).resolve().parents[1].glob("skills/*/SKILL.md")):
+        meta = ls.frontmatter(p.read_text(encoding="utf-8"))
+        d = meta.get("description", "")
+        assert ls.CO_MOC_KICH_HOAT.search(d), "%s thieu moc kich hoat: %r" % (p.parts[-2], d[:80])

@@ -1,6 +1,6 @@
 ---
 name: mecsu-category
-description: Audits the leaf category assigned to each product in an Excel workbook, flags the mis-categorised rows and proposes a replacement taken from the real taxonomy. Use when a product workbook already carries category assignments and the question is whether they are right - checking descriptions against assigned categories, finding mis-categorised SKUs, QC-ing a category export before it goes live, or re-checking a category column in any Excel file of products.
+description: Use when an Excel workbook of products already carries category assignments and the question is which ones are wrong - finding mis-categorised SKUs, QC-ing a category export before it goes live, re-checking a category column, or when the user says soát danh mục, kiểm danh mục, gán sai danh mục, danh mục lá.
 argument-hint: "[path/to/workbook.xlsx]"
 license: MIT
 ---

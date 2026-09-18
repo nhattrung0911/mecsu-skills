@@ -1,6 +1,6 @@
 ---
 name: mecsu-naming
-description: Dat ten chuan tieng Viet va dien thong so ky thuat cho san pham chi co ma hang, moi gia tri kem URL nguon that. Use when file Excel chi co cot ma hang ma chua co ten hoac thong so.
+description: Dung khi file Excel chi co cot ma hang ma chua co ten hoac thong so ky thuat, hoac khi nguoi dung go: dat ten tu ma, chuan hoa ten san pham, dien thong so tu ma hang, tra thong so theo ma, tao ma.
 ---
 
 # mecsu-naming
@@ -68,19 +68,7 @@ python ${CLAUDE_SKILL_DIR}/scripts/run.py --input <file.xlsx> --job jobs/naming-
 Dò không ra cột mã thì dừng và in header thật kèm `--code-col` (đếm từ 0). Muốn học lại quy ước
 thì thêm `--hoc-lai`. Kết quả ra `<job>/ket_qua.xlsx`, đổi chỗ bằng `--out`.
 
-Chạy lẻ từng bước:
-
-```bash
-python ${CLAUDE_SKILL_DIR}/scripts/extract_codes.py --input <file.xlsx> --out codes.json
-python ${CLAUDE_SKILL_DIR}/scripts/learn_convention.py --codes codes.json --out convention.json
-python ${CLAUDE_SKILL_DIR}/scripts/apply_convention.py --codes codes.json --convention convention.json --out names.json
-python ${CLAUDE_SKILL_DIR}/scripts/build_queries.py --codes codes.json --out queries.json
-python ${CLAUDE_SKILL_DIR}/scripts/search_sources.py --codes codes.json --queries queries.json --out search.json
-python ${CLAUDE_SKILL_DIR}/scripts/fetch_sources.py --sources search.json --out-dir web --limit 20
-python ${CLAUDE_SKILL_DIR}/scripts/extract_from_web.py --sources-dir web --search search.json --convention convention.json --out web_facts.json
-python ${CLAUDE_SKILL_DIR}/scripts/round3.py --job jobs/naming-01 --out round3.json
-python ${CLAUDE_SKILL_DIR}/scripts/build_sheet.py --input <file.xlsx> --job jobs/naming-01 --out ket_qua.xlsx
-```
+Chạy lẻ từng bước để soi một bước cụ thể khi tìm lỗi: [`references/chay_le_tung_buoc.md`](references/chay_le_tung_buoc.md).
 
 Thêm `--dry-run` vào các bước gọi model để xem **số lần gọi dự kiến** trước khi tiêu tiền.
 

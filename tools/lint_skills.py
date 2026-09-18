@@ -23,7 +23,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / 'skills'
 
 MAX_DESCRIPTION = 500          # khuyen nghi Anthropic
-MAX_SKILL_LINES = 500          # nguong hieu nang cua SKILL.md
+# Moc "tinh huong kich hoat". Dem ky tu khong bat duoc mot description tom tat quy
+# trinh; doi mot moc nhu the nay thi bat duoc, bang may.
+CO_MOC_KICH_HOAT = re.compile(r'^\s*(use when|dung khi|dùng khi)\b', re.I)
+# CLAUDE.md doi SKILL.md < 150 dong, lint lai chan o 500 - luat khong ai canh thi la
+# trang tri. Do duoc 2026-09-18: ca ba skill dang 135 / 109 / 80 dong, nen siet ve
+# dung con so trong tai lieu khong pha gi.
+MAX_SKILL_LINES = 150
 MIN_LINES_FOR_TOC = 100        # file tham chieu dai hon thi phai co muc luc
 
 LINK = re.compile(r'\[[^\]]*\]\(([^)#][^)]*)\)')
@@ -89,6 +95,13 @@ def check(skill: Path, fail) -> None:
         fail(name, 'thieu description')
     elif len(description) > MAX_DESCRIPTION:
         fail(name, 'description %d ky tu > %d' % (len(description), MAX_DESCRIPTION))
+    elif not CO_MOC_KICH_HOAT.search(description):
+        # CLAUDE.md doi description LIET KE TINH HUONG KICH HOAT, khong tom tat quy
+        # trinh. Do duoc 2026-09-18: category 460 ky tu, filter 425, ca hai mo dau
+        # bang tom tat quy trinh va khong co tu khoa tieng Viet nao - nguoi dung go
+        # tieng Viet. Ca hai di qua cong vi lint chi dem ky tu, khong soi noi dung.
+        fail(name, 'description phai BAT DAU bang "Use when" / "Dung khi" roi liet ke '
+                   'tinh huong kich hoat, khong mo dau bang tom tat quy trinh')
     for person in (' I ', 'I can ', 'you can ', 'You can '):
         if person in description:
             fail(name, 'description khong o ngoi thu ba: %r' % person)

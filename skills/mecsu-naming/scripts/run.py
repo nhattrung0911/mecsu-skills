@@ -245,12 +245,21 @@ def main() -> None:
     if args.den_vong >= 3:
         # `round3.py` thoat khac 0 khi KHONG co ma nao can vong 3 - do la dung y do,
         # khong phai loi, nen o day khong dung ca day vi chuyen do.
-        print('\n=== vong 3: ma kho, tim catalog ===', flush=True)
-        xong3 = subprocess.run([sys.executable, str(O_DAY / 'round3.py'),
-                                '--job', str(args.job),
-                                '--out', str(args.job / 'round3.json')])
-        if xong3.returncode not in (0, 1):
-            raise SystemExit('vong 3 thoat %d - dung ca day.' % xong3.returncode)
+        vong3 = args.job / 'round3.json'
+        vao3 = [p for p in (args.job / 'web_facts.json', codes, quy_uoc) if p.exists()]
+        if not can_chay_lai(vong3, vao3, args.lam_lai):
+            print('\n=== vong 3: ma kho, tim catalog ===\nbo qua: dau vao khong doi, da co %s'
+                  % vong3, flush=True)
+        else:
+            print('\n=== vong 3: ma kho, tim catalog ===', flush=True)
+            xong3 = subprocess.run([sys.executable, str(O_DAY / 'round3.py'),
+                                    '--job', str(args.job), '--out', str(vong3)])
+            if xong3.returncode not in (0, 1):
+                raise SystemExit('vong 3 thoat %d - dung ca day.' % xong3.returncode)
+            # exit 1 = khong ma nao can vong 3, co y do. Chi ghi dau nguon khi that su
+            # co ket qua, de lan sau con thu lai neu vong 2 sinh them viec.
+            if xong3.returncode == 0:
+                ghi_dau_nguon(vong3, vao3)
 
     buoc('dung file Excel de giao', str(O_DAY / 'build_sheet.py'),
          '--input', str(args.input), '--job', str(args.job), '--out', str(excel))

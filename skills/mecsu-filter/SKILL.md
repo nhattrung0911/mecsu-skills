@@ -1,6 +1,6 @@
 ---
 name: mecsu-filter
-description: Audits and completes the filter/spec set on a product workbook - catches name-format errors, name-vs-filter contradictions and missing filters, then fills each empty cell with a concrete value backed by evidence. Use when product filters or technical specs are missing, wrong or unverified in an Excel file of industrial goods (fasteners, bearings, hand tools, pneumatics), or when a spec column needs QC before it goes live.
+description: Use when filters or technical specs in an Excel file of industrial goods (fasteners, bearings, hand tools, pneumatics) are missing, wrong or unverified, when a spec column needs QC before it goes live, or when the user says soát thông số, điền thông số, kiểm filter, thiếu thông số kỹ thuật.
 argument-hint: "[path/to/workbook.xlsx]"
 license: MIT
 ---

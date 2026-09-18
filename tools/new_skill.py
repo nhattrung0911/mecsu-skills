@@ -165,7 +165,10 @@ def dung(root: Path, ten: str, purpose: str, title: str, when: str) -> Path:
     when = MO_DAU_THUA.sub('', when).strip()
     if not when:
         raise SystemExit('--when rong sau khi cat phan mo dau. Viet menh de noi tiep sau "Use when".')
-    description = '%s Use when %s' % (purpose.rstrip('.') + '.', when.rstrip('.') + '.')
+    # Moc kich hoat phai o DAU description: lint chan neu mo dau bang tom tat quy
+    # trinh, vi description tom tat quy trinh khien agent lam theo no va bo qua
+    # than skill (luat o CLAUDE.md, do duoc 2026-09-18 tren category va filter).
+    description = 'Use when %s %s' % (when.rstrip('.') + '.', purpose.rstrip('.') + '.')
     if len(description) > MAX_DESCRIPTION:
         raise SystemExit(
             'description dai %d ky tu > %d. Viet --purpose va --when ngan lai.'
