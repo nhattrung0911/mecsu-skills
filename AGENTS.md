@@ -99,6 +99,21 @@ Xanh nghĩa là *thứ có test thì đúng*, không phải *mọi thứ đều 
 
 Tên file test phải **duy nhất toàn repo** — pytest gom test theo tên file, không theo đường dẫn.
 
+## Nhánh và Pull Request
+
+| Nhánh | Dùng để |
+|---|---|
+| `main` | bản phát hành — người dùng cài plugin lấy từ đây. **Được bảo vệ**: chỉ vào qua Pull Request, chủ repo duyệt. |
+| `dev` | team sửa ở đây (hoặc nhánh con tách từ `dev`, ví dụ `dev-<tên>-<việc>`). |
+
+1. `git switch dev && git pull` rồi sửa; nhánh con thì `git switch -c dev-<tên>-<việc>`.
+2. Chạy đủ cổng ở trên (pytest, lint, `sync_site.py --check`) trước khi push.
+3. Push nhánh, mở Pull Request vào `main` (`gh pr create --base main`), ghi rõ sửa gì và vì sao.
+4. Đổi hành vi skill thì nâng `version` trong `.claude-plugin/plugin.json` và `marketplace.json` —
+   không nâng thì `claude plugin update` không kéo bản mới về máy người dùng.
+
+Không push thẳng `main`. Không commit `.env`, file trong `jobs/`, hay bản nháp trong `lab/`.
+
 ## Khi bí
 
 Đọc `skills/<tên-skill>/SKILL.md` — nó là nguồn sự thật cho từng lệnh. Vẫn không rõ thì hỏi người dùng, đừng đoán rồi chạy tiếp. Tài liệu đi kèm khác nhau theo skill, xem
