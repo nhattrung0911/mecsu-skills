@@ -1,6 +1,6 @@
 ---
 name: mecsu-naming
-description: Dung khi file Excel chi co cot ma hang ma chua co ten hoac thong so ky thuat, hoac khi nguoi dung go: dat ten tu ma, chuan hoa ten san pham, dien thong so tu ma hang, tra thong so theo ma, tao ma.
+description: Dung khi file Excel chi co cot ma hang ma chua co ten hoac thong so ky thuat, hoac khi nguoi dung go - dat ten tu ma, chuan hoa ten san pham, dien thong so tu ma hang, tra thong so theo ma, tao ma.
 ---
 
 # mecsu-naming
