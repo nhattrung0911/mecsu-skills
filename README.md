@@ -8,17 +8,21 @@ flowchart LR
     Q -->|"Danh mục gán<br/>đúng chưa?"| C["/mecsu-category"]
     Q -->|"Thông số<br/>đủ &amp; đúng chưa?"| T["/mecsu-filter"]
     Q -->|"Chỉ có mã,<br/>chưa có tên?"| N["/mecsu-naming"]
+    Q -->|"Có data giá,<br/>cần bảng giá?"| P["/mecsu-pricelist-claude"]
     C --> R1["📋 changelog.xlsx<br/><i>người duyệt</i>"]
     T --> R2["📋 cham_diem.xlsx<br/><i>người chấm</i>"]
     N --> R3["📋 ket_qua.xlsx<br/><i>người soát</i>"]
+    P --> R4["📋 BẢNG GIÁ &lt;HÃNG&gt;.xlsx<br/><i>người duyệt ảnh + data</i>"]
 
     style F fill:#e8f0fe,stroke:#4285f4
     style C fill:#fef7e0,stroke:#f9ab00
     style T fill:#fef7e0,stroke:#f9ab00
     style N fill:#fef7e0,stroke:#f9ab00
+    style P fill:#fef7e0,stroke:#f9ab00
     style R1 fill:#e6f4ea,stroke:#34a853
     style R2 fill:#e6f4ea,stroke:#34a853
     style R3 fill:#e6f4ea,stroke:#34a853
+    style R4 fill:#e6f4ea,stroke:#34a853
 ```
 
 ## Dây chuyền — LLM là tầng cuối
@@ -69,9 +73,10 @@ cp .env.example .env      # điền MECSU_BASE_URL + MECSU_API_KEY, một lần 
 
 <!-- skills:run:start -->
 ```
-/mecsu-category  d:/file.xlsx
-/mecsu-filter    d:/file.xlsx
-/mecsu-naming    d:/file.xlsx
+/mecsu-category          d:/file.xlsx
+/mecsu-filter            d:/file.xlsx
+/mecsu-naming            d:/file.xlsx
+/mecsu-pricelist-claude  d:/file.xlsx
 ```
 <!-- skills:run:end -->
 
@@ -97,6 +102,7 @@ flowchart LR
 | `/mecsu-category` | Sản phẩm này có nằm đúng danh mục lá không? | `changelog.xlsx` | [SKILL.md](skills/mecsu-category/SKILL.md) |
 | `/mecsu-filter` | Sản phẩm này đã đủ và đúng thông số chưa? | `cham_diem.xlsx` | [SKILL.md](skills/mecsu-filter/SKILL.md) |
 | `/mecsu-naming` | Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu? | `ket_qua.xlsx` | [SKILL.md](skills/mecsu-naming/SKILL.md) |
+| `/mecsu-pricelist-claude` | Có data giá rồi, cần bảng giá gửi đối tác? | `BẢNG GIÁ <HÃNG>.xlsx` + ảnh render từng trang | [SKILL.md](skills/mecsu-pricelist-claude/SKILL.md) |
 <!-- skills:bang:end -->
 
 Bỏ file cần xử lý vào `jobs/inbox/`. Output mỗi lần chạy nằm trong `jobs/` và **không** lên GitHub.

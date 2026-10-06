@@ -1,0 +1,145 @@
+{
+ "_doc": "Danh sach ho san pham, KHOP DAU TIEN THANG, muc cuoi la default. match.name_any: cac tu khoa (khong phan biet hoa thuong/dau) tim trong 'Ten Bang Gia'. split: null | {type: bearing_series} | {type: column, column_any:[tu khoa nhan cot], label:'..{value}'} | {type: regex, pattern, group, label:'DONG {key}'}. title_suffix: hau to them vao tieu de, {label} = nhan nhom con. sort: danh sach regex (phan biet hoa thuong, khop nhan cot goc hoac nhan bo dau); moi regex chon cot thong so dau tien khop. Co the sua file nay hoac sua plan.json cho tung bang gia. legend_defaults: {ky hieu: dong chu giai} dung khi data khong co cot Chu Giai (dinh nghia chuan, khong tra web).",
+ "families": [
+  {
+   "name": "bearing",
+   "match": {
+    "name_any": [
+     "vòng bi",
+     "bearing",
+     "ổ bi"
+    ]
+   },
+   "split": {
+    "type": "bearing_series"
+   },
+   "title_suffix": " - {label}",
+   "sort": [
+    "^d\\b",
+    "^D\\b",
+    "^B\\b"
+   ],
+   "legend_defaults": {
+    "d": "d: Đường Kính Trong",
+    "D": "D: Đường Kính Ngoài",
+    "B": "B: Độ Dày Vòng Bi"
+   }
+  },
+  {
+   "name": "dua",
+   "match": {
+    "name_any": [
+     "dũa"
+    ]
+   },
+   "split": {
+    "type": "description",
+    "variant": {
+     "pattern": "\\bRăng (Mịn|Thô|Trung Bình)\\b",
+     "label": "Răng",
+     "order": [
+      "Mịn",
+      "Trung Bình",
+      "Thô"
+     ]
+    }
+   },
+   "title_suffix": "",
+   "sort": [
+    "(?i)chieu dai luoi",
+    "(?i)duong kinh luoi",
+    "(?i)tong chieu dai",
+    "^Răng$"
+   ]
+  },
+  {
+   "name": "bua",
+   "match": {
+    "name_any": [
+     "búa"
+    ]
+   },
+   "split": {
+    "type": "description"
+   },
+   "title_suffix": "",
+   "sort": [
+    "(?i)trong luong",
+    "(?i)tong chieu dai"
+   ]
+  },
+  {
+   "name": "co-le",
+   "match": {
+    "name_any": [
+     "cờ lê"
+    ]
+   },
+   "split": null,
+   "title_suffix": "",
+   "sort": [
+    "(?i)size|kich thuoc|^s\\b|chieu dai|^l\\b"
+   ]
+  },
+  {
+   "name": "dau-tuyp",
+   "match": {
+    "name_any": [
+     "đầu tuýp",
+     "đầu khẩu",
+     "khẩu",
+     "tuýp"
+    ]
+   },
+   "split": {
+    "type": "column",
+    "column_any": [
+     "đầu vuông",
+     "drive"
+    ],
+    "label": "ĐẦU VUÔNG {value}"
+   },
+   "title_suffix": " - {label}",
+   "sort": [
+    "(?i)size|kich thuoc|^s\\b",
+    "(?i)chieu dai|^l\\b"
+   ]
+  },
+  {
+   "name": "kim",
+   "match": {
+    "name_any": [
+     "kìm"
+    ]
+   },
+   "split": null,
+   "title_suffix": "",
+   "sort": [
+    "(?i)chieu dai|^l\\b|size|kich thuoc"
+   ]
+  },
+  {
+   "name": "mui-khoan",
+   "match": {
+    "name_any": [
+     "mũi khoan"
+    ]
+   },
+   "split": null,
+   "title_suffix": "",
+   "sort": [
+    "(?i)duong kinh|^d\\b|size|kich thuoc"
+   ]
+  },
+  {
+   "name": "default",
+   "match": {},
+   "split": null,
+   "title_suffix": "",
+   "sort": [
+    "(?i)size|kich thuoc|chieu dai|^l\\b|duong kinh|^d\\b|^s\\b"
+   ],
+   "sort_fallback": "first_numeric"
+  }
+ ]
+}

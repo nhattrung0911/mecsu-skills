@@ -1,0 +1,235 @@
+{
+  "page": {
+    "rows": 77,
+    "cols": 56,
+    "col_width": 1.77734375,
+    "row_height": 10.35,
+    "col_px": 12.8,
+    "row_px": 13.8,
+    "body_top": 5,
+    "body_bottom": 74,
+    "body_left": 3,
+    "body_right": 55,
+    "paper_size": 9,
+    "orientation": "portrait",
+    "margins_in": {
+      "left": 0.2,
+      "right": 0.2,
+      "top": 0.2,
+      "bottom": 0.2,
+      "header": 0.2,
+      "footer": 0.2
+    },
+    "view": "pageLayout",
+    "page_code_format": "{code} - {n:02d}"
+  },
+  "fonts": {
+    "name": "Calibri"
+  },
+  "colors": {
+    "border": "FFE7E6E6",
+    "red": "FFFF0000",
+    "grey": "FF7F7F7F",
+    "white": "FFFFFFFF",
+    "black": "FF000000"
+  },
+  "header": {
+    "title": {
+      "range": "S1:AL3",
+      "format": "BẢNG GIÁ {brand}",
+      "size": 16,
+      "bold": true,
+      "align": "center"
+    },
+    "vat_notice": {
+      "range": "AM2:AY3",
+      "text": "100% sản phẩm có xuất VAT",
+      "size": 9,
+      "italic": true,
+      "align": "left"
+    },
+    "varin_logo": {
+      "path": "assets/logos/varin.png",
+      "col": "AY",
+      "row": 1,
+      "col_off_emu": 83724,
+      "row_off_emu": 64401,
+      "cx_emu": 624936,
+      "cy_emu": 263259
+    },
+    "brand_logo": {
+      "col": "D",
+      "row": 1,
+      "col_off_emu": 99060,
+      "row_off_emu": 15240,
+      "max_cx_emu": 1226820,
+      "max_cy_emu": 366127
+    }
+  },
+  "footer": {
+    "band": {
+      "range": "A75:BD76",
+      "text": "LƯU Ý GIÁ DÀNH CHO ĐỐI TÁC VARIN",
+      "size": 14,
+      "bold": true,
+      "color": "white",
+      "fill": "red",
+      "align": "center"
+    },
+    "order_link": {
+      "range": "A77:U77",
+      "text": "Đặt hàng trên: app.varin.vn",
+      "size": 8,
+      "italic": true,
+      "color": "grey",
+      "align": "left"
+    },
+    "page_code": {
+      "range": "AA77:AD77",
+      "size": 9,
+      "bold": true,
+      "italic": true,
+      "align": "center"
+    },
+    "order_hint": {
+      "range": "AH77:BD77",
+      "text": "sử dụng mã đặt hàng 7 chữ số để kiểm tra tồn kho và đặt hàng",
+      "size": 8,
+      "italic": true,
+      "color": "grey",
+      "align": "right"
+    }
+  },
+  "lanes": {
+    "positions": {
+      "17": [
+        3,
+        21,
+        39
+      ],
+      "26": [
+        3,
+        30
+      ],
+      "35": [
+        3,
+        21
+      ],
+      "53": [
+        3
+      ]
+    },
+    "widths": [
+      17,
+      26,
+      35,
+      53
+    ]
+  },
+  "card": {
+    "title_size": 9,
+    "title_rows": 2,
+    "line_size": 8,
+    "line_indent_cols": 1,
+    "line_char_px": 4.6,
+    "title_char_px": 5.6,
+    "min_desc_rows": 3,
+    "harmonize": true,
+    "backfill_window": 12,
+    "min_chunk_rows": 4,
+    "min_rows_to_split_across_pages": 24,
+    "gap_rows": 1,
+    "vat_text": "VAT: 8%",
+    "vat_size": 8,
+    "outline": true,
+    "note_rows": 2,
+    "note_size": 8,
+    "title_bold": true,
+    "title_halign": "left",
+    "title_valign": "center",
+    "line_halign": "left",
+    "line_valign": "center",
+    "vat_halign": "right"
+  },
+  "table": {
+    "header_rows": 2,
+    "header_size": 8,
+    "data_size": 8,
+    "char_px": 4.4,
+    "header_char_px": 4.8,
+    "cell_pad_px": 5,
+    "fit_tolerance": 0.06,
+    "wrap_rows_frac": 0.2,
+    "header_bold_factor": 1.1,
+    "char_wide": 6.3,
+    "char_paren": 3.3,
+    "char_classes": {
+      "upper_digit": 5.7,
+      "lower": 4.7,
+      "space": 2.4,
+      "punct": 2.9
+    },
+    "min_span": {
+      "code": 3,
+      "order_code": 4,
+      "price": 4,
+      "spec": 2
+    },
+    "labels": {
+      "code": "Mã Hãng",
+      "order_code": "Mã Đặt Hàng",
+      "price": "Giá/Cái\nChưa VAT"
+    },
+    "price_format": "#,##0",
+    "order_format": "@",
+    "price_formula": "=VLOOKUP({cell},Sheet2!$A:$B,2,0)",
+    "align": {
+      "code": "left",
+      "spec": "center",
+      "order_code": "center",
+      "price": "right"
+    },
+    "header_bold": true,
+    "order_bold": true,
+    "price_italic": true,
+    "price_color": "red",
+    "border_style": "thin",
+    "valign": "center"
+  },
+  "image": {
+    "placement": "rescue",
+    "max_h_rows": 5,
+    "max_w_frac": 0.6,
+    "min_cols": 4,
+    "min_h_px": 70,
+    "max_w_frac_with_drawing": 0.75,
+    "pad_px": 4,
+    "catalog_candidates": 3,
+    "catalog_sources": [
+      {
+        "name": "mecsu",
+        "page": "https://mecsu.vn/x/i/{order}",
+        "og_image": true,
+        "skip_if_contains": "logo"
+      }
+    ],
+    "orientation": {
+      "mode": "diagonal",
+      "angle": 30,
+      "heavy_end": "low",
+      "min_elongation": 1.8
+    }
+  },
+  "sheet2": {
+    "name": "Sheet2",
+    "headers": [
+      "Mã Đặt Hàng",
+      "varin_price"
+    ]
+  },
+  "sheet1_name": "Bảng Giá",
+  "uniformity": {
+    "min_fill": 0.8,
+    "min_image_frac": 0.6
+  }
+}

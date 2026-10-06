@@ -23,6 +23,14 @@
       "onboarding_prompt": "Dung skill mecsu-naming cho file cua toi.",
       "website_section": "mecsu-naming",
       "contract_version": "2.0"
+    },
+    {
+      "skill_id": "mecsu-pricelist-claude",
+      "public_title": "làm bảng giá chuẩn Varin",
+      "purpose": "Từ file Excel data (mã hãng, order id, giá, thông số) dựng bảng giá A4 chuẩn Varin theo brand: header logo, card ảnh + bảng, giá VLOOKUP, footer đỏ, mã trang. Tên card lấy đúng data, ảnh chính thức theo order id, chia card và sắp dòng theo loại sản phẩm. Leader điều phối, worker Sonnet làm việc nặng.",
+      "onboarding_prompt": "Dùng skill mecsu-pricelist-claude: làm bảng giá chuẩn Varin cho hãng <HÃNG> (mã trang <MÃ>) từ file <đường dẫn data.xlsx>. Tên card giữ đúng data, data nghi sai thì báo chứ không tự sửa, ảnh phải đúng hãng. Việc nặng giao worker Sonnet theo references/team.md.",
+      "website_section": "mecsu-pricelist-claude",
+      "contract_version": "2.0"
     }
   ]
 }

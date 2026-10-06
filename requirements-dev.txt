@@ -23,3 +23,9 @@ ddgs>=9.0
 
 # Doc catalog PDF o vong 3 cua mecsu-naming.
 pypdf>=4.0
+
+# mecsu-pricelist-claude: dung anh (Pillow), xoay anh dong bo (numpy), kiem doc.json (jsonschema).
+# Tuy chon, KHONG can cho CI: rembg (tach nen dep hon), pywin32 (render trang qua Excel tren Windows).
+Pillow>=10.0
+numpy>=1.26
+jsonschema>=4.0

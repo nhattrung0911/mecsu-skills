@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Mecsu Skills: ba skill kiểm tra dữ liệu sản phẩm cho AI agent - soát danh mục, soát thông số kỹ thuật, đặt tên và tra thông số từ mã hãng, có chốt chặn trước khi báo xong." />
+    <meta name="description" content="Mecsu Skills: bốn skill dữ liệu sản phẩm cho AI agent - soát danh mục, soát thông số kỹ thuật, đặt tên và tra thông số từ mã hãng, dựng bảng giá chuẩn Varin, có chốt chặn trước khi báo xong." />
     <title>Mecsu Skills — Soát dữ liệu sản phẩm cùng AI</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
@@ -29,7 +29,7 @@
         <div class="hero-copy">
           <p class="eyebrow">Mecsu Skills · dành cho AI agent</p>
           <h1>Soát dữ liệu sản phẩm, không đoán bừa.</h1>
-          <p class="hero-lede">Ba skill chạy trên file Excel của bạn: soát <strong>danh mục</strong>, soát <strong>thông số kỹ thuật</strong>, và <strong>đặt tên + tra thông số từ mã hãng</strong>. Phần chưa đủ bằng chứng được giữ lại cho người duyệt thay vì báo xong cho có.</p>
+          <p class="hero-lede">Bốn skill chạy trên file Excel của bạn: soát <strong>danh mục</strong>, soát <strong>thông số kỹ thuật</strong>, <strong>đặt tên + tra thông số từ mã hãng</strong>, và <strong>dựng bảng giá chuẩn Varin</strong>. Phần chưa đủ bằng chứng được giữ lại cho người duyệt thay vì báo xong cho có.</p>
           <a class="button button-primary" href="#bat-dau">Bắt đầu trong 3 bước</a>
         </div>
         <aside class="hero-card" aria-label="Số đo thật">
@@ -166,6 +166,12 @@
             <p>Đọc chính file để rút ra quy ước đặt tên của bạn, rồi tra web điền tên và thông số cho dòng chỉ có mã. Mỗi giá trị kèm URL nguồn thật.</p>
             <p class="skill-out">Ra: <strong>ket_qua.xlsx</strong> — OK · REVIEW · trống, không đoán bừa</p>
           </article>
+          <article class="skill-card">
+            <p class="skill-tag">/mecsu-pricelist-claude</p>
+            <h3>Data giá → bảng giá A4 chuẩn Varin</h3>
+            <p>Dựng bảng giá theo brand: logo, card ảnh chính thức + bảng, giá VLOOKUP, footer đỏ. Tự chia card theo dòng sản phẩm, sắp theo thông số chính, đủ ảnh 100%.</p>
+            <p class="skill-out">Ra: <strong>BẢNG GIÁ &lt;HÃNG&gt;.xlsx` + ảnh render từng trang</strong> — data nghi sai: báo, không tự sửa</p>
+          </article>
 <!-- skills:the:end -->
         </div>
       </section>
@@ -202,6 +208,14 @@
           <template id="prompt-mecsu-naming">Dung skill mecsu-naming cho file cua toi.</template>
           <p class="prompt-text">Dung skill mecsu-naming cho file cua toi.</p>
           <button class="button button-outline" type="button" data-copy-prompt="mecsu-naming">Sao chép yêu cầu chạy</button>
+        </div>
+      </section>
+      <section id="mecsu-pricelist-claude" class="section-shell section-muted" data-skill-id="mecsu-pricelist-claude">
+        <div class="section-heading compact-heading"><p class="eyebrow">Skill 4</p><h2>/mecsu-pricelist-claude — làm bảng giá chuẩn Varin.</h2><p>Từ file Excel data (mã hãng, order id, giá, thông số) dựng bảng giá A4 chuẩn Varin theo brand: header logo, card ảnh + bảng, giá VLOOKUP, footer đỏ, mã trang. Tên card lấy đúng data, ảnh chính thức theo order id, chia card và sắp dòng theo loại sản phẩm. Leader điều phối, worker Sonnet làm việc nặng.</p></div>
+        <div class="prompt-card prompt-card-light">
+          <template id="prompt-mecsu-pricelist-claude">Dùng skill mecsu-pricelist-claude: làm bảng giá chuẩn Varin cho hãng &lt;HÃNG&gt; (mã trang &lt;MÃ&gt;) từ file &lt;đường dẫn data.xlsx&gt;. Tên card giữ đúng data, data nghi sai thì báo chứ không tự sửa, ảnh phải đúng hãng. Việc nặng giao worker Sonnet theo references/team.md.</template>
+          <p class="prompt-text">Dùng skill mecsu-pricelist-claude: làm bảng giá chuẩn Varin cho hãng &lt;HÃNG&gt; (mã trang &lt;MÃ&gt;) từ file &lt;đường dẫn data.xlsx&gt;. Tên card giữ đúng data, data nghi sai thì báo chứ không tự sửa, ảnh phải đúng hãng. Việc nặng giao worker Sonnet theo references/team.md.</p>
+          <button class="button button-outline" type="button" data-copy-prompt="mecsu-pricelist-claude">Sao chép yêu cầu chạy</button>
         </div>
       </section>
       <!-- skills:end -->

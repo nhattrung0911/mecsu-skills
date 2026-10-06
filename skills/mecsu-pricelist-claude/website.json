@@ -1,0 +1,11 @@
+{
+  "title": "làm bảng giá chuẩn Varin",
+  "purpose": "Từ file Excel data (mã hãng, order id, giá, thông số) dựng bảng giá A4 chuẩn Varin theo brand: header logo, card ảnh + bảng, giá VLOOKUP, footer đỏ, mã trang. Tên card lấy đúng data, ảnh chính thức theo order id, chia card và sắp dòng theo loại sản phẩm. Leader điều phối, worker Sonnet làm việc nặng.",
+  "prompt": "Dùng skill mecsu-pricelist-claude: làm bảng giá chuẩn Varin cho hãng <HÃNG> (mã trang <MÃ>) từ file <đường dẫn data.xlsx>. Tên card giữ đúng data, data nghi sai thì báo chứ không tự sửa, ảnh phải đúng hãng. Việc nặng giao worker Sonnet theo references/team.md.",
+  "readme_question": "Có data giá rồi, cần bảng giá gửi đối tác?",
+  "readme_output": "`BẢNG GIÁ <HÃNG>.xlsx` + ảnh render từng trang",
+  "readme_needs": "cột mã hãng, order id, giá Varin (thông số, mô tả, ảnh tuỳ chọn)",
+  "card_title": "Data giá → bảng giá A4 chuẩn Varin",
+  "card_body": "Dựng bảng giá theo brand: logo, card ảnh chính thức + bảng, giá VLOOKUP, footer đỏ. Tự chia card theo dòng sản phẩm, sắp theo thông số chính, đủ ảnh 100%.",
+  "card_note": "data nghi sai: báo, không tự sửa"
+}

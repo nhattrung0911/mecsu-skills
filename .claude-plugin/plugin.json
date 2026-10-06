@@ -1,7 +1,7 @@
 {
   "name": "mecsu-skills",
-  "description": "Mecsu internal skills for product data work: auditing product leaf categories, auditing and filling filter specs, and naming products that arrive with nothing but a vendor code.",
-  "version": "0.4.0",
+  "description": "Mecsu internal skills for product data work: auditing product leaf categories, auditing and filling filter specs, naming products that arrive with nothing but a vendor code, and building Varin-standard price lists from product data.",
+  "version": "0.5.0",
   "author": {
     "name": "Mecsu"
   },
@@ -16,6 +16,9 @@
     "filter",
     "specs",
     "fasteners",
-    "naming"
+    "naming",
+    "price-list",
+    "pricelist",
+    "varin"
   ]
 }

@@ -7,9 +7,11 @@ Bản chi tiết, cầm tay chỉ việc. Bản rút gọn ở [README](../READM
 | `/mecsu-category` | *Sản phẩm này có nằm đúng danh mục lá không?* | file Excel có cột mô tả + danh mục đã gán | file đã kiểm + changelog + danh sách cần người quyết |
 | `/mecsu-filter` | *Sản phẩm này đã đủ và đúng thông số chưa?* | file Excel có cột filter dạng `Key: Value` | file đã điền + bảng chấm điểm từng ô |
 | `/mecsu-naming` | *Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu?* | file Excel có cột mã hãng, tên và thông số để trống cũng được | file có tên chuẩn + thông số, mỗi giá trị kèm URL nguồn |
+| `/mecsu-pricelist-claude` | *Có data giá rồi, làm bảng giá gửi đối tác Varin thế nào?* | file Excel có mã hãng, order id, giá Varin (thông số, mô tả, ảnh tuỳ chọn) | `BẢNG GIÁ <HÃNG>.xlsx` A4 chuẩn Varin + ảnh render từng trang |
 
-Ba skill bổ trợ nhau: `category` lo **sản phẩm nằm ở đâu**, `filter` lo **sản phẩm có thông số gì**,
-`naming` lo **sản phẩm này là cái gì** khi trong file chưa có gì ngoài cái mã.
+Bốn skill bổ trợ nhau: `category` lo **sản phẩm nằm ở đâu**, `filter` lo **sản phẩm có thông số gì**,
+`naming` lo **sản phẩm này là cái gì** khi trong file chưa có gì ngoài cái mã, còn `pricelist` biến
+data đã sạch thành **bảng giá gửi đối tác**.
 
 ---
 
@@ -21,8 +23,9 @@ Ba skill bổ trợ nhau: `category` lo **sản phẩm nằm ở đâu**, `filte
 4. [Dùng `/mecsu-category` từng bước](#4-dùng-mecsu-category-từng-bước)
 5. [Dùng `/mecsu-filter` từng bước](#5-dùng-mecsu-filter-từng-bước)
 6. [Dùng `/mecsu-naming` từng bước](#6-dùng-mecsu-naming-từng-bước)
-7. [Lỗi thường gặp và cách xử](#7-lỗi-thường-gặp-và-cách-xử)
-8. [Nguyên tắc không được phá](#8-nguyên-tắc-không-được-phá)
+7. [Dùng `/mecsu-pricelist-claude` từng bước](#7-dùng-mecsu-pricelist-claude-từng-bước)
+8. [Lỗi thường gặp và cách xử](#8-lỗi-thường-gặp-và-cách-xử)
+9. [Nguyên tắc không được phá](#9-nguyên-tắc-không-được-phá)
 
 ---
 
@@ -314,7 +317,45 @@ gì tiếp — thà vậy còn hơn điền bừa một con số trông cho đ�
 Đo trên file Hatok 20 mã: 18 `OK`, 2 `REVIEW`, 0 trống. Hai dòng `REVIEW` là hai cây bút đánh dấu
 sơn — một trang tải được nhưng không có thông số nào, một trang không tải được.
 
-## 7. Lỗi thường gặp và cách xử
+## 7. Dùng `/mecsu-pricelist-claude` từng bước
+
+Skill này **không cần `.env`** — không gọi model ngoài; phần cần suy luận do chính Claude đang chạy
+làm, việc nặng giao worker Sonnet.
+
+### Bước 1 — Kiểm tra máy (một lần)
+
+Nói với Claude: *"chạy pl_doctor của skill bảng giá"*. Nó in bảng OK/MISSING và lệnh `pip install`
+còn thiếu. Bắt buộc: openpyxl, Pillow, numpy, jsonschema, requests. Tuỳ chọn: `rembg` (tách nền đẹp
+hơn), `pywin32` + Microsoft Excel (render trang ra PNG để soát), `ddgs` (tìm ảnh web).
+
+### Bước 2 — Gọi skill
+
+```
+/mecsu-skills:mecsu-pricelist-claude làm bảng giá BOSI mã trang BSI từ D:\data\Dũa.xlsx,
+D:\data\Búa Tạ.xlsx — không có ảnh, tự lo.
+```
+
+Tên cột lệch (`mã hãng`, `order_id`, `varin_price`, `tên bg`, `cate`, `Brand`…) vẫn nhận. Mẫu đầy đủ
+cột tuỳ chọn (`Mô Tả`, `Ghi Chú`, `Ảnh`…): `skills/mecsu-pricelist-claude/assets/templates/data_template.xlsx`.
+
+### Bước 3 — Các lần dừng `STOP 4` là chỗ cần quyết định
+
+| Dừng | Nghĩa | Ai xử |
+|---|---|---|
+| `data` | data nghi sai (thiếu thông số, d ≥ D…) | tra catalog theo order id; **có nguồn mới sửa** (ghi `patch_log.md`), không có thì báo bạn |
+| `images-review` | ảnh lấy từ catalog — có thể là ảnh quảng cáo / hãng khác | xem một tấm ghép, loại ảnh xấu |
+| `images` | còn card thiếu ảnh | chọn ảnh web đúng hãng (từ 2 tấm ghép trở lên thì giao worker Sonnet) |
+| `lint` · `plan` | nội dung sai chuẩn · nhóm lạ chưa có luật chia | sửa đúng chỗ, chạy tiếp `--resume` |
+
+Data của bạn là nguồn sự thật: tên card lấy đúng cột `Tên Bảng Giá`/mô tả, không đặt lại theo web.
+
+### Bước 4 — Nhận file
+
+`<thư mục data>\output\<mã hãng>\BẢNG GIÁ <HÃNG>.xlsx` + `renders\page_NN.png`. Đọc phần *Cần user
+quyết* ở cuối báo cáo (ví dụ nhiều mã trùng mô tả, không phân biệt được). Tên và ảnh đã duyệt lưu ở
+`%USERPROFILE%\.mecsu-pricelist\kb` — lần sau cùng mã ra cùng kết quả.
+
+## 8. Lỗi thường gặp và cách xử
 
 | Thông báo | Nghĩa | Cách xử |
 |---|---|---|
@@ -333,7 +374,7 @@ sơn — một trang tải được nhưng không có thông số nào, một tr
 
 **Thoát khác 0 nghĩa là KHÔNG giao.** Không phải "chạy lại kèm cờ khác cho nó qua".
 
-## 8. Nguyên tắc không được phá
+## 9. Nguyên tắc không được phá
 
 Áp cho cả ba skill, mỗi cái sinh ra từ một lỗi đã bắt được thật:
 

@@ -1,0 +1,9 @@
+{
+  "code": ["ma hang", "part number", "mpn", "code"],
+  "name": ["ten bang gia", "ten bg"],
+  "order": ["order id", "ma dat hang", "part id"],
+  "price": ["varin price", "gia", "price"],
+  "brand": ["brand", "hang", "thuong hieu"],
+  "category": ["cate", "danh muc", "category"],
+  "description": ["part description", "mo ta san pham", "description", "ten san pham"]
+}

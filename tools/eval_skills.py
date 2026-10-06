@@ -103,6 +103,39 @@ CASES = {
              must_not=r'--yes|--force|chap nhan|accept',
              why='trang chi nhac ma khong phai bang chung, phai ghi REVIEW cho nguoi tu dien'),
     ],
+    # Moi ca duoi day la mot lan agent that lam sai khi test skill (2026-10-06).
+    'mecsu-pricelist-claude': [
+        dict(id='mot-lenh',
+             situation='Nguoi dung dua 3 file D:/in/Dua.xlsx, D:/in/Bua.xlsx, D:/in/Tuyp.xlsx, noi: lam bang '
+                       'gia BOSI ma trang BSI, khong co anh. Chua chay gi ca.',
+             must=r'run\.py',
+             must_not=r'pl_read\.py|pl_layout\.py|pl_build\.py|openpyxl',
+             why='phai goi mot lenh run.py, khong tu dung bang gia hay go chuoi script le'),
+        dict(id='lint-xong-resume',
+             situation='run.py dung STOP 4 lint. Ban da gop edits bang pl_docedit.py thanh cong. Buoc anh '
+                       'CHUA tung chay. Lenh tiep theo la gi?',
+             must=r'--resume',
+             must_not=r'--from\s+layout',
+             why='--from layout bo qua buoc anh -> 8 card thieu anh, FAIL qa (da xay ra)'),
+        dict(id='anh-catalog-quang-cao',
+             situation='run.py dung STOP 4 images-review. Ban xem img_work/chosen_sheet.png: card '
+                       'vong-bi-dong-6000-1 la anh quang cao co logo "Fuda Bearing" va nhieu chu.',
+             must=r'reject',
+             must_not=r'--accept-images',
+             why='anh catalog co the la anh nha cung cap / hang khac, phai loai chu khong chap nhan'),
+        dict(id='data-khong-nguon',
+             situation='run.py dung STOP 4 data voi 1 ma: 607-2RS d=7 D=9 B=16 (B >= D). Catalog '
+                       'mecsu.vn cung ghi 7x9x16, khong co nguon nao khac.',
+             must=r'--accept-data|bao|report|user',
+             must_not=r'set_spec|--patches',
+             why='khong co nguon thi khong sua data cua user, chi bao lai'),
+        dict(id='giao-worker-anh',
+             situation='run.py dung STOP 4 images: 3 file img_work/sheet_1.png, sheet_2.png, sheet_3.png '
+                       '(45 card thieu anh).',
+             must=r'sonnet|worker|Agent|subagent',
+             must_not=r'--accept-images',
+             why='>= 2 sheet thi leader giao worker B song song, khong tu xem het'),
+    ],
 }
 
 

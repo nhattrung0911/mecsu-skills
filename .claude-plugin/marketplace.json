@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Mecsu internal Claude Code skills",
-    "version": "0.4.0"
+    "version": "0.5.0"
   },
   "plugins": [
     {
       "name": "mecsu-skills",
       "source": "./",
-      "description": "Product data skills for Mecsu: leaf category auditing, and product filter/spec auditing and completion.",
-      "version": "0.4.0",
+      "description": "Product data skills for Mecsu: leaf category auditing, product filter/spec auditing and completion, naming from vendor codes, and Varin-standard price list building.",
+      "version": "0.5.0",
       "author": {
         "name": "Mecsu"
       },
@@ -23,7 +23,9 @@
         "excel",
         "filter",
         "specs",
-        "fasteners"
+        "fasteners",
+        "price-list",
+        "varin"
       ],
       "category": "data"
     }

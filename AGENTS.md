@@ -26,13 +26,15 @@ skill nào giữ key riêng.
 | `/mecsu-category` | Sản phẩm này có nằm đúng danh mục lá không? | mô tả + danh mục đã gán |
 | `/mecsu-filter` | Sản phẩm này đã đủ và đúng thông số chưa? | filter dạng `Key: Value` |
 | `/mecsu-naming` | Sản phẩm chỉ có mã này tên gì, thông số bao nhiêu? | cột mã hãng (tên và thông số để trống cũng được) |
+| `/mecsu-pricelist-claude` | Có data giá rồi, cần bảng giá gửi đối tác? | cột mã hãng, order id, giá Varin (thông số, mô tả, ảnh tuỳ chọn) |
 <!-- skills:bang:end -->
 
 <!-- skills:run:start -->
 ```
-/mecsu-category  d:/duong-dan/file.xlsx
-/mecsu-filter    d:/duong-dan/file.xlsx
-/mecsu-naming    d:/duong-dan/file.xlsx
+/mecsu-category          d:/duong-dan/file.xlsx
+/mecsu-filter            d:/duong-dan/file.xlsx
+/mecsu-naming            d:/duong-dan/file.xlsx
+/mecsu-pricelist-claude  d:/duong-dan/file.xlsx
 ```
 <!-- skills:run:end -->
 

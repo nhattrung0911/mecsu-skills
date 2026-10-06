@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pricelist doc",
+  "type": "object",
+  "required": [
+    "meta",
+    "cards"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "brand",
+        "page_code"
+      ],
+      "properties": {
+        "brand": {
+          "type": "string"
+        },
+        "page_code": {
+          "type": "string",
+          "pattern": "^[A-Z]{2,4}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "brand_logo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "page_count": {
+          "type": "integer"
+        },
+        "theme_overrides": {
+          "type": "object"
+        }
+      }
+    },
+    "prices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "order_code"
+        ],
+        "properties": {
+          "order_code": {
+            "type": "string",
+            "pattern": "^[0-9]{7}$"
+          },
+          "price": {}
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "columns",
+          "rows"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "legend": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "image": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "ok",
+                  "review",
+                  "missing"
+                ]
+              },
+              "max_w_px": {
+                "type": "number"
+              },
+              "max_h_px": {
+                "type": "number"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "key"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "role": {
+                  "enum": [
+                    "code",
+                    "spec",
+                    "order_code",
+                    "price"
+                  ]
+                },
+                "span": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1
+                },
+                "align": {
+                  "enum": [
+                    "left",
+                    "center",
+                    "right"
+                  ]
+                }
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "width": {
+            "oneOf": [
+              {
+                "const": "auto"
+              },
+              {
+                "enum": [
+                  17,
+                  26,
+                  35,
+                  53
+                ]
+              }
+            ]
+          },
+          "desc_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "data_row_height": {
+            "enum": [
+              1,
+              3
+            ]
+          },
+          "place": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "col": {
+                "type": "integer"
+              },
+              "row": {
+                "type": "integer"
+              },
+              "locked": {
+                "type": "boolean"
+              }
+            }
+          },
+          "split": {
+            "enum": [
+              "allow",
+              "keep_together"
+            ]
+          },
+          "_geo": {
+            "type": "object"
+          },
+          "_warnings": {
+            "type": "array"
+          },
+          "drawing": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "ok",
+                  "review",
+                  "missing"
+                ]
+              },
+              "max_w_px": {
+                "type": "number"
+              },
+              "max_h_px": {
+                "type": "number"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "title_source": {
+            "enum": [
+              "data",
+              "kb",
+              "research"
+            ]
+          }
+        }
+      }
+    },
+    "free": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "page",
+          "range"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "text",
+              "image",
+              "shape"
+            ]
+          },
+          "page": {
+            "type": "integer"
+          },
+          "range": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "style": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}
