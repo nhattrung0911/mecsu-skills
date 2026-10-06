@@ -37,14 +37,82 @@ function shorten(text, limit) {
   return clean.length > limit ? `${clean.slice(0, limit - 1).trimEnd()}…` : clean;
 }
 
+// Chu trong khu phai nam GON trong khung, ke ca khi them skill lam khu hep lai
+// (4 skill: khu ~116 don vi, ten "/mecsu-pricelist-claude" can ~180). Do do dai
+// that sau khi ve thay vi doan theo so ky tu - font that moi may moi khac.
+const BAY_PAD = 10;
+
+function fitWidth(node, maxWidth) {
+  const length = node.getComputedTextLength();
+  if (!length || length <= maxWidth) return;
+  const size = parseFloat(getComputedStyle(node).fontSize) || 13;
+  node.style.fontSize = `${(size * maxWidth / length).toFixed(2)}px`;
+}
+
+function wrapLines(node, text, maxWidth, maxLines, lineHeight) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const x = node.getAttribute("x");
+  node.textContent = "";
+  let line = svg("tspan", { x, dy: 0 }, "");
+  node.append(line);
+  let lines = 1;
+  for (const word of words) {
+    const before = line.textContent;
+    line.textContent = before ? `${before} ${word}` : word;
+    if (line.getComputedTextLength() <= maxWidth || !before) continue;
+    if (lines === maxLines) {               // het cho: cat dong cuoi kem dau ba cham
+      line.textContent = before;
+      while (line.textContent && line.getComputedTextLength() > maxWidth - 8) {
+        line.textContent = line.textContent.slice(0, -1);
+      }
+      line.textContent = `${line.textContent.trimEnd()}…`;
+      return lines;
+    }
+    line.textContent = before;
+    line = svg("tspan", { x, dy: lineHeight }, word);
+    node.append(line);
+    lines += 1;
+  }
+  fitWidth(line, maxWidth);                 // mot tu rat dai van khong duoc tran khung
+  return lines;
+}
+
+function fitTag(tag, id, maxWidth, lineHeight) {
+  // Ten qua dai thi xuong dong o dau gach noi cuoi cung con vua, thay vi thu chu den muc
+  // khong doc duoc ("/mecsu-pricelist-" + "claude"). Tra ve so dong da dung.
+  const full = `/${id}`;
+  tag.textContent = full;
+  const size = parseFloat(getComputedStyle(tag).fontSize) || 13;
+  if (tag.getComputedTextLength() <= maxWidth || !full.includes("-")) {
+    fitWidth(tag, maxWidth);
+    return 1;
+  }
+  const x = tag.getAttribute("x");
+  let cut = full.lastIndexOf("-");
+  tag.textContent = full.slice(0, cut + 1);
+  while (tag.getComputedTextLength() > maxWidth && full.lastIndexOf("-", cut - 1) > 0) {
+    cut = full.lastIndexOf("-", cut - 1);
+    tag.textContent = full.slice(0, cut + 1);
+  }
+  tag.textContent = "";
+  const first = svg("tspan", { x, dy: 0 }, full.slice(0, cut + 1));
+  const second = svg("tspan", { x, dy: lineHeight }, full.slice(cut + 1));
+  tag.append(first, second);
+  fitWidth(first, maxWidth);
+  fitWidth(second, maxWidth);
+  tag.style.fontSize = `${size}px`;
+  return 2;
+}
+
 function buildBays(bays) {
   const sections = [...document.querySelectorAll("[data-skill-id]")];
   if (!sections.length) return [];
 
-  const LEFT = 170, RIGHT = 700, GAP = 22, TOP = 330, HEIGHT = 76;
+  const LEFT = 170, RIGHT = 700, GAP = 22, TOP = 330, TAG_Y = 26, LINE = 14, PAD_Y = 16;
   const width = Math.min(190, (RIGHT - LEFT - GAP * (sections.length - 1)) / sections.length);
+  const inner = width - 2 * BAY_PAD;
 
-  return sections.map((section, index) => {
+  const built = sections.map((section, index) => {
     const id = section.dataset.skillId;
     const heading = section.querySelector("h2")?.textContent ?? id;
     const purpose = heading.includes("—") ? heading.split("—").slice(1).join("—") : "";
@@ -60,15 +128,22 @@ function buildBays(bays) {
     group.dataset.cost = "khu skill";
     group.dataset.note = `${shorten(purpose || heading, 120)}. Bấm vào khu này để xem cách gọi.`;
 
-    group.append(
-      svg("path", { class: "bay-link", d: `M ${width / 2} 0 V -30` }),
-      svg("rect", { class: "bay-box", width, height: HEIGHT, rx: 14 }),
-      svg("text", { class: "bay-tag", x: width / 2, y: 30 }, `/${id}`),
-      svg("text", { class: "bay-sub", x: width / 2, y: 54 }, shorten(purpose || "khu skill", 24)),
-    );
-    bays.append(group);
-    return group;
+    const box = svg("rect", { class: "bay-box", width, height: 80, rx: 14 });
+    const tag = svg("text", { class: "bay-tag", x: width / 2, y: TAG_Y });
+    const sub = svg("text", { class: "bay-sub", x: width / 2, y: 0 });
+    group.append(svg("path", { class: "bay-link", d: `M ${width / 2} 0 V -30` }), box, tag, sub);
+    bays.append(group);                     // phai nam trong DOM thi moi do duoc chu
+    const tagLines = fitTag(tag, id, inner, LINE);
+    const subY = TAG_Y + (tagLines - 1) * LINE + 22;
+    sub.setAttribute("y", subY);
+    const subLines = wrapLines(sub, shorten(purpose || "khu skill", 80), inner, 2, LINE);
+    return { group, box, bottom: subY + (subLines - 1) * LINE + PAD_Y };
   });
+
+  // Moi khu cao bang nhau: khung theo khu nhieu chu nhat de ban do deu tay.
+  const height = Math.max(...built.map((b) => b.bottom));
+  for (const b of built) b.box.setAttribute("height", height);
+  return built.map((b) => b.group);
 }
 
 function setupMap() {
